@@ -1,43 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        select, button {
+            margin: 10px;
+            padding: 5px;
+        }
+        canvas {
+            max-width: 600px;
+            margin: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <div class="container">
+        <h2>Report Dashboard</h2>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        <!-- Dropdown to Select Report -->
+        <label for="reportType">Select Report:</label>
+        <select id="reportType">
+            <option value="sales">Sales Report</option>
+            <option value="categories">Category Distribution</option>
+        </select>
+        <button onclick="loadReport()">Generate Report</button>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+        <!-- Line Chart for Trends -->
+        <h3>Sales Trend</h3>
+        <canvas id="lineChart"></canvas>
+
+        <!-- Pie Chart for Distribution -->
+        <h3>Category Distribution</h3>
+        <canvas id="pieChart"></canvas>
+
+        <!-- Report Table -->
+        <h3>Report Data</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Sales</th>
+                </tr>
+            </thead>
+            <tbody id="reportTable">
+                <!-- Data will be inserted here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let lineChart, pieChart;
+
+        // Function to Load Report Data
+        function loadReport() {
+            const reportType = document.getElementById("reportType").value;
+
+            if (reportType === "sales") {
+                generateLineChart();
+                generateTable("sales");
+            } else {
+                generatePieChart();
+                generateTable("categories");
+            }
+        }
+
+        // Function to Generate Line Chart (Sales Trend)
+        function generateLineChart() {
+            const ctx = document.getElementById("lineChart").getContext("2d");
+
+            if (lineChart) lineChart.destroy(); // Destroy existing chart
+
+            lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                    datasets: [{
+                        label: 'Monthly Sales ($)',
+                        data: [5000, 7000, 6000, 8000, 9000],
+                        borderColor: 'blue',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                }
+            });
+        }
+
+        // Function to Generate Pie Chart (Category Distribution)
+        function generatePieChart() {
+            const ctx = document.getElementById("pieChart").getContext("2d");
+
+            if (pieChart) pieChart.destroy(); // Destroy existing chart
+
+            pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Electronics', 'Clothing', 'Furniture'],
+                    datasets: [{
+                        label: 'Sales Distribution',
+                        data: [40, 35, 25],
+                        backgroundColor: ['red', 'blue', 'green']
+                    }]
+                }
+            });
+        }
+
+        // Function to Populate Report Table
+        function generateTable(type) {
+            const tableBody = document.getElementById("reportTable");
+            tableBody.innerHTML = "";
+
+            let data = [];
+
+            if (type === "sales") {
+                data = [
+                    { date: "2024-01-01", category: "Electronics", sales: "$5000" },
+                    { date: "2024-02-01", category: "Clothing", sales: "$7000" },
+                    { date: "2024-03-01", category: "Furniture", sales: "$6000" }
+                ];
+            } else {
+                data = [
+                    { date: "2024-01-01", category: "Electronics", sales: "40%" },
+                    { date: "2024-02-01", category: "Clothing", sales: "35%" },
+                    { date: "2024-03-01", category: "Furniture", sales: "25%" }
+                ];
+            }
+
+            data.forEach(row => {
+                let tr = `<tr>
+                            <td>${row.date}</td>
+                            <td>${row.category}</td>
+                            <td>${row.sales}</td>
+                          </tr>`;
+                tableBody.innerHTML += tr;
+            });
+        }
+
+        // Initialize with default report
+        loadReport();
+    </script>
+
+</body>
 </html>
