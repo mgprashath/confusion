@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure JS Reporting Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        select, button {
+            margin: 10px;
+            padding: 5px;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+            border: 1px solid #ddd;
+        }
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Report Dashboard</h2>
+
+        <!-- Dropdown to Select Report -->
+        <label for="reportType">Select Report:</label>
+        <select id="reportType">
+            <option value="sales">Sales Report</option>
+            <option value="categories">Category Distribution</option>
+        </select>
+        <button onclick="generateReport()">Generate Report</button>
+
+        <!-- Line Chart for Trends -->
+        <h2 id="chartTitle">Sales Trend</h2>
+        <canvas id="lineChart" width="500" height="300"></canvas>
+
+        <!-- Pie Chart for Distribution -->
+        <canvas id="pieChart" width="300" height="300" style="display: none;"></canvas>
+
+        <!-- Report Table -->
+        <h2>Report Data</h2>
+        <table id="reportTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Sales</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be inserted dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function generateReport() {
+            const reportType = document.getElementById("reportType").value;
+
+            if (reportType === "sales") {
+                document.getElementById("chartTitle").innerText = "Sales Trend";
+                document.getElementById("lineChart").style.display = "block";
+                document.getElementById("pieChart").style.display = "none";
+                drawLineChart();
+                populateTable("sales");
+            } else {
+                document.getElementById("chartTitle").innerText = "Category Distribution";
+                document.getElementById("lineChart").style.display = "none";
+                document.getElementById("pieChart").style.display = "block";
+                drawPieChart();
+                populateTable("categories");
+            }
+        }
+
+        function drawLineChart() {
+            const canvas = document.getElementById("lineChart");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const data = [10, 40, 25, 60, 45, 80, 30];
+            const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+            const maxValue = Math.max(...data);
+
+            // Draw Grid Lines
+            ctx.strokeStyle = "#ddd";
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= maxValue; i += 20) {
+                let y = 280 - (i / maxValue) * 250;
+                ctx.beginPath();
+                ctx.moveTo(50, y);
+                ctx.lineTo(480, y);
+                ctx.stroke();
+                ctx.fillText(i, 20, y + 5);
+            }
+
+            // Draw Axes
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, 280);
+            ctx.lineTo(480, 280);
+            ctx.stroke();
+
+            // Draw Labels
+            ctx.fillStyle = "black";
+            for (let i = 0; i < labels.length; i++) {
+                let x = 70 + i * 60;
+                ctx.fillText(labels[i], x, 295);
+            }
+
+            // Draw Data Line
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i < data.length; i++) {
+                let x = 70 + i * 60;
+                let y = 280 - (data[i] / maxValue) * 250;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw Points & Values
+            ctx.fillStyle = "red";
+            for (let i = 0; i < data.length; i++) {
+                let x = 70 + i * 60;
+                let y = 280 - (data[i] / maxValue) * 250;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillText(data[i], x - 10, y - 10);
+            }
+        }
+
+        function drawPieChart() {
+            const canvas = document.getElementById("pieChart");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const data = [30, 70, 50, 20];
+            const colors = ["red", "blue", "green", "orange"];
+            const total = data.reduce((sum, value) => sum + value, 0);
+
+            let startAngle = 0;
+            for (let i = 0; i < data.length; i++) {
+                let sliceAngle = (data[i] / total) * 2 * Math.PI;
+
+                // Draw Slice
+                ctx.beginPath();
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 100, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+
+                // Draw Labels
+                let midAngle = startAngle + sliceAngle / 2;
+                let labelX = 150 + Math.cos(midAngle) * 120;
+                let labelY = 150 + Math.sin(midAngle) * 120;
+                ctx.fillStyle = "black";
+                ctx.fillText(`${data[i]}%`, labelX, labelY);
+
+                startAngle += sliceAngle;
+            }
+        }
+
+        function populateTable(type) {
+            const tableBody = document.getElementById("reportTable").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = "";
+
+            let data = [];
+
+            if (type === "sales") {
+                data = [
+                    { date: "2024-01-01", category: "Electronics", sales: "$5000" },
+                    { date: "2024-02-01", category: "Clothing", sales: "$7000" },
+                    { date: "2024-03-01", category: "Furniture", sales: "$6000" }
+                ];
+            } else {
+                data = [
+                    { date: "2024-01-01", category: "Electronics", sales: "40%" },
+                    { date: "2024-02-01", category: "Clothing", sales: "35%" },
+                    { date: "2024-03-01", category: "Furniture", sales: "25%" }
+                ];
+            }
+
+            data.forEach(row => {
+                let tr = `<tr>
+                            <td>${row.date}</td>
+                            <td>${row.category}</td>
+                            <td>${row.sales}</td>
+                          </tr>`;
+                tableBody.innerHTML += tr;
+            });
+        }
+
+        generateReport(); // Default Report
+    </script>
+
+</body>
+</html>
