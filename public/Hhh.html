@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure JS Reporting Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        select, button {
+            margin: 10px;
+            padding: 5px;
+        }
+        canvas {
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Report Dashboard</h2>
+
+        <!-- Dropdown to Select Report -->
+        <label for="reportType">Select Report:</label>
+        <select id="reportType">
+            <option value="sales">Sales Report</option>
+            <option value="categories">Category Distribution</option>
+        </select>
+        <button onclick="generateReport()">Generate Report</button>
+
+        <!-- Line Chart for Trends -->
+        <h2 id="chartTitle">Sales Trend</h2>
+        <canvas id="lineChart" width="400" height="200"></canvas>
+
+        <!-- Pie Chart for Distribution -->
+        <canvas id="pieChart" width="300" height="300" style="display: none;"></canvas>
+    </div>
+
+    <script>
+        function generateReport() {
+            const reportType = document.getElementById("reportType").value;
+
+            if (reportType === "sales") {
+                document.getElementById("chartTitle").innerText = "Sales Trend";
+                document.getElementById("lineChart").style.display = "block";
+                document.getElementById("pieChart").style.display = "none";
+                drawLineChart();
+            } else {
+                document.getElementById("chartTitle").innerText = "Category Distribution";
+                document.getElementById("lineChart").style.display = "none";
+                document.getElementById("pieChart").style.display = "block";
+                drawPieChart();
+            }
+        }
+
+        function drawLineChart() {
+            const canvas = document.getElementById("lineChart");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous chart
+
+            const data = [10, 40, 25, 60, 45, 80, 30];
+            const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"];
+
+            // Draw Axes
+            ctx.beginPath();
+            ctx.moveTo(40, 10);
+            ctx.lineTo(40, 180);
+            ctx.lineTo(380, 180);
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+
+            // Draw Data Line
+            ctx.beginPath();
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 2;
+            for (let i = 0; i < data.length; i++) {
+                let x = 50 + i * 50;
+                let y = 180 - data[i];
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw Points
+            ctx.fillStyle = "red";
+            for (let i = 0; i < data.length; i++) {
+                let x = 50 + i * 50;
+                let y = 180 - data[i];
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawPieChart() {
+            const canvas = document.getElementById("pieChart");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous chart
+
+            const data = [30, 70, 50, 20];
+            const colors = ["red", "blue", "green", "orange"];
+            const total = data.reduce((sum, value) => sum + value, 0);
+
+            let startAngle = 0;
+            for (let i = 0; i < data.length; i++) {
+                let sliceAngle = (data[i] / total) * 2 * Math.PI;
+
+                // Draw Slice
+                ctx.beginPath();
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 100, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+
+                startAngle += sliceAngle;
+            }
+        }
+
+        // Generate Default Report on Page Load
+        generateReport();
+    </script>
+
+</body>
+</html>
