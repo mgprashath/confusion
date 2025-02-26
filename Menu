@@ -5,34 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive Menu</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
 
         /* Web Menu */
-        .navbar {
+        .repMenu {
             display: flex;
             justify-content: space-around;
             background-color: black;
             padding: 10px 0;
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #222;
-            border-radius: 5px;
-            text-align: center;
-            flex: 1;
-            margin: 0 5px;
+        .repMenu a {
+                color: white;
+                text-decoration: none;
+                padding: 10px 20px;
+                background-color: #222;
+                border-radius: 5px;
+                text-align: center;
+                flex: 1;
+                margin: 0 5px;
         }
 
         /* Mobile Menu */
-        .mobile-menu {
+        .repMobile-menu {
             display: none;
             flex-direction: column;
             position: absolute;
@@ -43,13 +37,13 @@
             padding: 10px 0;
         }
 
-        .mobile-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 15px;
-            background-color: #222;
-            text-align: center;
-            border-bottom: 1px solid #444;
+        .repMobile-menu a {
+                color: white;
+                text-decoration: none;
+                padding: 15px;
+                background-color: #222;
+                text-align: center;
+                border-bottom: 1px solid #444;
         }
 
         /* Hamburger Button */
@@ -64,7 +58,7 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .navbar {
+            .repMenu {
                 display: none;
             }
 
@@ -72,42 +66,43 @@
                 display: block;
             }
         }
-    </style>
+</style>
 </head>
 <body>
 
-    <!-- Hamburger Button -->
-    <div class="hamburger" onclick="toggleMenu()">☰ Menu</div>
+   
+<!-- Hamburger Button -->
+<div class="hamburger" onclick="toggleMenu()">☰ Menu</div>
 
-    <!-- Web Menu -->
-    <div class="navbar">
-        <a href="#">Employee</a>
-        <a href="#">ID</a>
-        <a href="#">Quote No</a>
-        <a href="#">Gross Cost</a>
-    </div>
+<!-- Web Menu -->
+<div class="repMenu">
+    <a href="#">Employee</a>
+    <a href="#">ID</a>
+    <a href="#">Quote No</a>
+    <a href="#">Gross Cost</a>
+</div>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <a href="#">Employee</a>
-        <a href="#">ID</a>
-        <a href="#">Quote No</a>
-        <a href="#">Gross Cost</a>
-    </div>
+<!-- Mobile Menu -->
+<div class="repMobile-menu" id="mobileMenu">
+    <a href="#">Employee</a>
+    <a href="#">ID</a>
+    <a href="#">Quote No</a>
+    <a href="#">Gross Cost</a>
+</div>
 
-    <script>
-        function toggleMenu() {
-            var menu = document.getElementById("mobileMenu");
-            menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+<script>
+    function toggleMenu() {
+        var menu = document.getElementById("mobileMenu");
+        menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+    }
+
+    // Automatically hide mobile menu when resizing to web view
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 768) {
+            document.getElementById("mobileMenu").style.display = "none";
         }
-
-        // Automatically hide mobile menu when resizing to web view
-        window.addEventListener("resize", function () {
-            if (window.innerWidth > 768) {
-                document.getElementById("mobileMenu").style.display = "none";
-            }
-        });
-    </script>
+    });
+</script>
 
 </body>
 </html>
