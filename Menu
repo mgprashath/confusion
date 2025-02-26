@@ -23,48 +23,57 @@
 
         .menu-buttons {
             display: flex;
-            flex-grow: 1;
             justify-content: center;
+            gap: 10px;
         }
 
         .menu-buttons a {
-            flex: 1; /* Equal width */
             text-align: center;
-            padding: 10px;
+            padding: 10px 15px;
             color: white;
             text-decoration: none;
-            border-right: 1px solid #333;
+            background-color: #333;
+            border-radius: 5px;
         }
 
-        .menu-buttons a:last-child {
-            border-right: none;
+        .menu-buttons a:hover {
+            background-color: #555;
         }
 
-        /* Mobile Hamburger */
+        /* Mobile Menu */
         .hamburger {
             display: none;
             font-size: 24px;
             cursor: pointer;
             color: white;
-            margin-left: 10px;
+            padding: 10px;
+            border: none;
+            background: none;
         }
 
         .mobile-menu {
             display: none;
             flex-direction: column;
-            background-color: black;
             position: absolute;
             top: 50px;
             left: 0;
             width: 100%;
+            background-color: black;
+            padding: 10px 0;
+            text-align: center;
         }
 
         .mobile-menu a {
             padding: 10px;
             color: white;
-            text-align: center;
-            border-bottom: 1px solid #333;
             text-decoration: none;
+            background-color: #333;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        .mobile-menu a:hover {
+            background-color: #555;
         }
 
         /* Responsive */
@@ -82,7 +91,7 @@
 
     <!-- Menu Container -->
     <div class="menu-container">
-        <span class="hamburger" onclick="toggleMenu()">☰</span>
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
         <div class="menu-buttons">
             <a href="#">Employee</a>
             <a href="#">ID</a>
