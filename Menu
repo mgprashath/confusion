@@ -98,12 +98,15 @@
     <script>
         function toggleMenu() {
             var menu = document.getElementById("mobileMenu");
-            if (menu.style.display === "flex") {
-                menu.style.display = "none";
-            } else {
-                menu.style.display = "flex";
-            }
+            menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
         }
+
+        // Automatically hide mobile menu when resizing to web view
+        window.addEventListener("resize", function () {
+            if (window.innerWidth > 768) {
+                document.getElementById("mobileMenu").style.display = "none";
+            }
+        });
     </script>
 
 </body>
