@@ -5,54 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive Menu</title>
     <style>
-        /* General Styling */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
 
-        /* Menu Bar */
-        .menu-container {
+        /* Web Menu */
+        .navbar {
+            display: flex;
+            justify-content: space-around;
             background-color: black;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
+            padding: 10px 0;
         }
 
-        .menu-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .menu-buttons a {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
+        .navbar a {
             color: white;
             text-decoration: none;
-            background-color: #333;
+            padding: 10px 20px;
+            background-color: #222;
             border-radius: 5px;
-            min-width: 100px; /* Fixed button size */
-        }
-
-        .menu-buttons a:hover {
-            background-color: #555;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
         }
 
         /* Mobile Menu */
-        .hamburger {
-            display: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: white;
-            padding: 10px;
-            border: none;
-            background: none;
-        }
-
         .mobile-menu {
             display: none;
             flex-direction: column;
@@ -62,29 +41,33 @@
             width: 100%;
             background-color: black;
             padding: 10px 0;
-            text-align: center;
         }
 
         .mobile-menu a {
-            padding: 10px;
             color: white;
             text-decoration: none;
-            background-color: #333;
-            margin: 5px auto;
-            border-radius: 5px;
-            width: 90%; /* Full width in mobile */
-            display: block;
+            padding: 15px;
+            background-color: #222;
+            text-align: center;
+            border-bottom: 1px solid #444;
         }
 
-        .mobile-menu a:hover {
-            background-color: #555;
+        /* Hamburger Button */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            padding: 10px;
+            background-color: black;
+            color: white;
+            text-align: center;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .menu-buttons {
+            .navbar {
                 display: none;
             }
+
             .hamburger {
                 display: block;
             }
@@ -93,15 +76,15 @@
 </head>
 <body>
 
-    <!-- Menu Container -->
-    <div class="menu-container">
-        <button class="hamburger" onclick="toggleMenu()">☰</button>
-        <div class="menu-buttons">
-            <a href="#">Employee</a>
-            <a href="#">ID</a>
-            <a href="#">Quote No</a>
-            <a href="#">Gross Cost</a>
-        </div>
+    <!-- Hamburger Button -->
+    <div class="hamburger" onclick="toggleMenu()">☰ Menu</div>
+
+    <!-- Web Menu -->
+    <div class="navbar">
+        <a href="#">Employee</a>
+        <a href="#">ID</a>
+        <a href="#">Quote No</a>
+        <a href="#">Gross Cost</a>
     </div>
 
     <!-- Mobile Menu -->
@@ -115,7 +98,11 @@
     <script>
         function toggleMenu() {
             var menu = document.getElementById("mobileMenu");
-            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+            if (menu.style.display === "flex") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "flex";
+            }
         }
     </script>
 
