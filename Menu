@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Menu</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Menu Bar */
+        .menu-container {
+            background-color: black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .menu-buttons a {
+            flex: 1; /* Equal width */
+            text-align: center;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+            border-right: 1px solid #333;
+        }
+
+        .menu-buttons a:last-child {
+            border-right: none;
+        }
+
+        /* Mobile Hamburger */
+        .hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background-color: black;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+        }
+
+        .mobile-menu a {
+            padding: 10px;
+            color: white;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-buttons {
+                display: none;
+            }
+            .hamburger {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menu Container -->
+    <div class="menu-container">
+        <span class="hamburger" onclick="toggleMenu()">☰</span>
+        <div class="menu-buttons">
+            <a href="#">Employee</a>
+            <a href="#">ID</a>
+            <a href="#">Quote No</a>
+            <a href="#">Gross Cost</a>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#">Employee</a>
+        <a href="#">ID</a>
+        <a href="#">Quote No</a>
+        <a href="#">Gross Cost</a>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById("mobileMenu");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+    </script>
+
+</body>
+</html>
