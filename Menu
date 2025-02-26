@@ -24,16 +24,18 @@
         .menu-buttons {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 5px;
         }
 
         .menu-buttons a {
+            flex: 1;
             text-align: center;
-            padding: 10px 15px;
+            padding: 10px;
             color: white;
             text-decoration: none;
             background-color: #333;
             border-radius: 5px;
+            min-width: 100px; /* Fixed button size */
         }
 
         .menu-buttons a:hover {
@@ -68,8 +70,10 @@
             color: white;
             text-decoration: none;
             background-color: #333;
-            margin: 5px;
+            margin: 5px auto;
             border-radius: 5px;
+            width: 90%; /* Full width in mobile */
+            display: block;
         }
 
         .mobile-menu a:hover {
