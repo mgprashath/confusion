@@ -1,0 +1,14 @@
+document.querySelectorAll('.repMobile-menu a').forEach(item => {
+    item.addEventListener('touchstart', () => {
+        item.classList.add('hovered');
+    });
+    item.addEventListener('touchend', () => {
+        setTimeout(() => item.classList.remove('hovered'), 500);
+    });
+});
+
+
+
+.repMobile-menu a.hovered {
+    background-color: #004494; /* Same as hover */
+}
