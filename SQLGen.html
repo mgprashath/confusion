@@ -16,7 +16,7 @@
         .section {
             border: 1px solid #ccc;
             padding: 10px;
-            width: 300px;
+            min-width: 300px;
         }
         textarea {
             width: 100%;
@@ -27,7 +27,7 @@
             margin-top: 20px;
         }
 
-        /* Corrected Alignment for Checkboxes and Labels */
+        /* ✅ Fixed Alignment for Checkboxes and Labels */
         .columns-container {
             display: flex;
             flex-wrap: wrap;
@@ -39,11 +39,11 @@
             display: flex;
             align-items: center;
             width: calc(33.33% - 10px); /* 3 Columns Per Row */
-            min-width: 120px;
+            min-width: 200px;
             background: #f5f5f5;
             padding: 5px;
             border-radius: 5px;
-            white-space: nowrap; /* Keep label on same line */
+            white-space: nowrap; /* Keep text on the same line */
         }
 
         .column-item input {
@@ -149,7 +149,7 @@
     function updateColumns() {
         const columnsDiv = document.getElementById("columns-list");
         columnsDiv.innerHTML = "";
-        
+
         let columnsContainer = document.createElement("div");
         columnsContainer.className = "columns-container";
 
