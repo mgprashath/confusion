@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Query Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .section {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 300px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-top: 10px;
+        }
+        .date-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>SQL Query Generator</h2>
+
+<div class="container">
+    <!-- Tables Section -->
+    <div class="section">
+        <h3>Select Tables</h3>
+        <label><input type="checkbox" class="table-checkbox" value="Quote"> Quote</label><br>
+        <label><input type="checkbox" class="table-checkbox" value="QuoteStatus"> QuoteStatus</label><br>
+        <label><input type="checkbox" class="table-checkbox" value="Client"> Client</label><br>
+        <label><input type="checkbox" class="table-checkbox" value="VehicleKeeper"> VehicleKeeper</label><br>
+        <label><input type="checkbox" class="table-checkbox" value="ContactDetail"> ContactDetail</label><br>
+        <label><input type="checkbox" class="table-checkbox" value="TaxRate"> TaxRate</label><br>
+    </div>
+
+    <!-- Columns Section -->
+    <div class="section">
+        <h3>Select Columns</h3>
+        <div id="columns-list">
+            <small>Select a table first</small>
+        </div>
+    </div>
+</div>
+
+<!-- Date Selection -->
+<div class="date-section">
+    <h3>Select Date Range</h3>
+    <label>Start Time:</label>
+    <input type="datetime-local" id="startTime" onchange="generateSQL()"> 
+    <label>End Time:</label>
+    <input type="datetime-local" id="endTime" onchange="generateSQL()"> 
+</div>
+
+<!-- Generated SQL -->
+<h3>Generated SQL Query</h3>
+<textarea id="sqlOutput" readonly></textarea>
+
+<script>
+    // Define actual table-column mapping
+    const columnMapping = {
+        "Client.NOLSClientNo": "C.NOLSClientNo",
+        "Client.TradingName": "C.TradingName",
+
+        "Quote.QuoteID": "Q.QuoteID",
+        "Quote.CreationDateTime": "Q.CreationDateTime",
+        "QuoteStatus.QuoteStatusName": "QS.QuoteStatusName",
+        "Quote.IsQuoteSP": "Q.IsQuoteSP",
+        "Quote.MyCarsFlag": "Q.MyCarsFlag",
+
+        "VehicleKeeper.PayrollID": "Vk.PayrollID",
+        "VehicleKeeper.FirstName": "Vk.FirstName",
+        "VehicleKeeper.Surname": "Vk.Surname",
+
+        "ContactDetail.EmailAddress": "Cd.EmailAddress",
+        "ContactDetail.PostCode": "Cd.PostCode",
+        "ContactDetail.MobileTelephoneNo": "Cd.MobileTelephoneNo",
+
+        "TaxRate.TaxRatePercentage": "T.TaxRatePercentage",
+
+        "Quote.SPGrossSactoCoverCosts": "Q.SPGrossSactoCoverCosts",
+        "Quote.SPActualGrossSacMade": "Q.SPActualGrossSacMade"
+    };
+
+    // Define table joins with correct relationships
+    const tableJoins = {
+        "Quote-QuoteStatus": "INNER JOIN [QTDDB].[dbo].QuoteStatus QS ON Q.QuoteStatusID = QS.QuoteStatusID",
+        "Quote-Client": "INNER JOIN [QTDDB].[dbo].Client C ON Q.ClientID = C.ClientID",
+        "Quote-VehicleKeeper": "INNER JOIN [QTDDB].[dbo].VehicleKeeper Vk ON Q.VehicleKeeperID = Vk.VehicleKeeperID",
+        "Quote-ContactDetail": "INNER JOIN [QTDDB].[dbo].ContactDetail Cd ON vk.ContactDetailID = Cd.ContactDetailID",
+        "Quote-TaxRate": "INNER JOIN [QTDDB].[dbo].TaxRate T ON Q.TaxRateID = T.TaxRateID"
+    };
+
+    let selectedTables = new Set();
+    let selectedColumns = new Set();
+
+    document.querySelectorAll(".table-checkbox").forEach(checkbox => {
+        checkbox.addEventListener("change", function() {
+            if (this.checked) {
+                selectedTables.add(this.value);
+            } else {
+                selectedTables.delete(this.value);
+            }
+            updateColumns();
+            generateSQL();
+        });
+    });
+
+    function updateColumns() {
+        const columnsDiv = document.getElementById("columns-list");
+        columnsDiv.innerHTML = "";
+
+        selectedTables.forEach(table => {
+            let label = document.createElement("strong");
+            label.textContent = table;
+            columnsDiv.appendChild(label);
+            columnsDiv.appendChild(document.createElement("br"));
+
+            Object.keys(columnMapping).forEach(column => {
+                if (column.startsWith(table)) {
+                    let checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "column-checkbox";
+                    checkbox.value = columnMapping[column];
+                    checkbox.addEventListener("change", function() {
+                        if (this.checked) {
+                            selectedColumns.add(this.value);
+                        } else {
+                            selectedColumns.delete(this.value);
+                        }
+                        generateSQL();
+                    });
+
+                    let columnLabel = document.createElement("label");
+                    columnLabel.appendChild(checkbox);
+                    columnLabel.appendChild(document.createTextNode(columnMapping[column].slice(2)));
+                    columnsDiv.appendChild(columnLabel);
+                    columnsDiv.appendChild(document.createElement("br"));
+                }
+            });
+
+            columnsDiv.appendChild(document.createElement("hr"));
+        });
+    }
+
+    function generateSQL() {
+        if (selectedTables.size === 0 || selectedColumns.size === 0) {
+            document.getElementById("sqlOutput").value = "";
+            return;
+        }
+
+        // Get selected start and end times
+        let startTime = document.getElementById("startTime").value;
+        let endTime = document.getElementById("endTime").value;
+
+        // Format datetime for SQL
+        let formattedStartTime = startTime ? `'${startTime.replace("T", " ")}'` : "'2024-11-01 00:00:00'";
+        let formattedEndTime = endTime ? `'${endTime.replace("T", " ")}'` : "'2024-12-01 00:00:00'";
+
+        let sql = "SELECT " + Array.from(selectedColumns).join(", ") + " FROM [QTDDB].[dbo].Quote Q";
+
+        selectedTables.forEach((table, index) => {
+            if (table !== "Quote") {
+                let joinKey = `Quote-${table}`;
+                if (tableJoins[joinKey]) {
+                    sql += `\n${tableJoins[joinKey]}`;
+                }
+            }
+        });
+
+        sql += `\nWHERE CONVERT(datetime, Q.CreationDateTime, 105) BETWEEN ${formattedStartTime} AND ${formattedEndTime}`;
+        sql += `\nAND Q.IsQuoteSP = 1`;
+
+        document.getElementById("sqlOutput").value = sql;
+    }
+</script>
+
+</body>
+</html>
