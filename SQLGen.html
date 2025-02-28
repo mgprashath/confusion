@@ -26,6 +26,40 @@
         .date-section {
             margin-top: 20px;
         }
+
+        /* Responsive Columns Section */
+        .columns-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 100%;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            width: calc(33.33% - 10px); /* 3 Columns Per Row */
+            min-width: 120px;
+            background: #f5f5f5;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .column-item input {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .column-item {
+                width: calc(50% - 10px); /* 2 Columns Per Row */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .column-item {
+                width: 100%; /* 1 Column Per Row */
+            }
+        }
     </style>
 </head>
 <body>
@@ -71,23 +105,18 @@
     const columnMapping = {
         "Client.NOLSClientNo": "C.NOLSClientNo",
         "Client.TradingName": "C.TradingName",
-
         "Quote.QuoteID": "Q.QuoteID",
         "Quote.CreationDateTime": "Q.CreationDateTime",
         "QuoteStatus.QuoteStatusName": "QS.QuoteStatusName",
         "Quote.IsQuoteSP": "Q.IsQuoteSP",
         "Quote.MyCarsFlag": "Q.MyCarsFlag",
-
         "VehicleKeeper.PayrollID": "Vk.PayrollID",
         "VehicleKeeper.FirstName": "Vk.FirstName",
         "VehicleKeeper.Surname": "Vk.Surname",
-
         "ContactDetail.EmailAddress": "Cd.EmailAddress",
         "ContactDetail.PostCode": "Cd.PostCode",
         "ContactDetail.MobileTelephoneNo": "Cd.MobileTelephoneNo",
-
         "TaxRate.TaxRatePercentage": "T.TaxRatePercentage",
-
         "Quote.SPGrossSactoCoverCosts": "Q.SPGrossSactoCoverCosts",
         "Quote.SPActualGrossSacMade": "Q.SPActualGrossSacMade"
     };
@@ -119,6 +148,9 @@
     function updateColumns() {
         const columnsDiv = document.getElementById("columns-list");
         columnsDiv.innerHTML = "";
+        
+        let columnsContainer = document.createElement("div");
+        columnsContainer.className = "columns-container";
 
         selectedTables.forEach(table => {
             let label = document.createElement("strong");
@@ -144,11 +176,16 @@
                     let columnLabel = document.createElement("label");
                     columnLabel.appendChild(checkbox);
                     columnLabel.appendChild(document.createTextNode(columnMapping[column].slice(2)));
-                    columnsDiv.appendChild(columnLabel);
-                    columnsDiv.appendChild(document.createElement("br"));
+
+                    let columnItem = document.createElement("div");
+                    columnItem.className = "column-item";
+                    columnItem.appendChild(columnLabel);
+
+                    columnsContainer.appendChild(columnItem);
                 }
             });
 
+            columnsDiv.appendChild(columnsContainer);
             columnsDiv.appendChild(document.createElement("hr"));
         });
     }
@@ -159,17 +196,15 @@
             return;
         }
 
-        // Get selected start and end times
         let startTime = document.getElementById("startTime").value;
         let endTime = document.getElementById("endTime").value;
 
-        // Format datetime for SQL
         let formattedStartTime = startTime ? `'${startTime.replace("T", " ")}'` : "'2024-11-01 00:00:00'";
         let formattedEndTime = endTime ? `'${endTime.replace("T", " ")}'` : "'2024-12-01 00:00:00'";
 
         let sql = "SELECT " + Array.from(selectedColumns).join(", ") + " FROM [QTDDB].[dbo].Quote Q";
 
-        selectedTables.forEach((table, index) => {
+        selectedTables.forEach((table) => {
             if (table !== "Quote") {
                 let joinKey = `Quote-${table}`;
                 if (tableJoins[joinKey]) {
