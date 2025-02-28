@@ -9,22 +9,53 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+
         .container {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
         }
+
         .section {
             border: 1px solid #ccc;
             padding: 10px;
-            width: 300px;
+            min-width: 300px;
         }
+
         textarea {
             width: 100%;
             height: 150px;
             margin-top: 10px;
         }
+
         .date-section {
             margin-top: 20px;
+        }
+
+        /* ✅ Properly align checkboxes and labels */
+        .columns-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 100%;
+        }
+
+        .column-item {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            min-width: 200px;
+            padding: 5px;
+        }
+
+        .column-item input {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .column-item {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -67,32 +98,27 @@
 <textarea id="sqlOutput" readonly></textarea>
 
 <script>
-    // Define actual table-column mapping
+    // Table & Column Mapping (Table Prefix Removed from Display)
     const columnMapping = {
         "Client.NOLSClientNo": "C.NOLSClientNo",
         "Client.TradingName": "C.TradingName",
-
         "Quote.QuoteID": "Q.QuoteID",
         "Quote.CreationDateTime": "Q.CreationDateTime",
         "QuoteStatus.QuoteStatusName": "QS.QuoteStatusName",
         "Quote.IsQuoteSP": "Q.IsQuoteSP",
         "Quote.MyCarsFlag": "Q.MyCarsFlag",
-
         "VehicleKeeper.PayrollID": "Vk.PayrollID",
         "VehicleKeeper.FirstName": "Vk.FirstName",
         "VehicleKeeper.Surname": "Vk.Surname",
-
         "ContactDetail.EmailAddress": "Cd.EmailAddress",
         "ContactDetail.PostCode": "Cd.PostCode",
         "ContactDetail.MobileTelephoneNo": "Cd.MobileTelephoneNo",
-
         "TaxRate.TaxRatePercentage": "T.TaxRatePercentage",
-
         "Quote.SPGrossSactoCoverCosts": "Q.SPGrossSactoCoverCosts",
         "Quote.SPActualGrossSacMade": "Q.SPActualGrossSacMade"
     };
 
-    // Define table joins with correct relationships
+    // Table Joins
     const tableJoins = {
         "Quote-QuoteStatus": "INNER JOIN [QTDDB].[dbo].QuoteStatus QS ON Q.QuoteStatusID = QS.QuoteStatusID",
         "Quote-Client": "INNER JOIN [QTDDB].[dbo].Client C ON Q.ClientID = C.ClientID",
@@ -120,6 +146,9 @@
         const columnsDiv = document.getElementById("columns-list");
         columnsDiv.innerHTML = "";
 
+        let columnsContainer = document.createElement("div");
+        columnsContainer.className = "columns-container";
+
         selectedTables.forEach(table => {
             let label = document.createElement("strong");
             label.textContent = table;
@@ -128,6 +157,9 @@
 
             Object.keys(columnMapping).forEach(column => {
                 if (column.startsWith(table)) {
+                    let columnItem = document.createElement("div");
+                    columnItem.className = "column-item";
+
                     let checkbox = document.createElement("input");
                     checkbox.type = "checkbox";
                     checkbox.className = "column-checkbox";
@@ -141,14 +173,18 @@
                         generateSQL();
                     });
 
+                    // ✅ Remove table prefix from column labels
                     let columnLabel = document.createElement("label");
+                    let displayName = column.split(".")[1]; // Remove table prefix
                     columnLabel.appendChild(checkbox);
-                    columnLabel.appendChild(document.createTextNode(columnMapping[column].slice(2)));
-                    columnsDiv.appendChild(columnLabel);
-                    columnsDiv.appendChild(document.createElement("br"));
+                    columnLabel.appendChild(document.createTextNode(displayName));
+
+                    columnItem.appendChild(columnLabel);
+                    columnsContainer.appendChild(columnItem);
                 }
             });
 
+            columnsDiv.appendChild(columnsContainer);
             columnsDiv.appendChild(document.createElement("hr"));
         });
     }
@@ -159,17 +195,15 @@
             return;
         }
 
-        // Get selected start and end times
         let startTime = document.getElementById("startTime").value;
         let endTime = document.getElementById("endTime").value;
 
-        // Format datetime for SQL
         let formattedStartTime = startTime ? `'${startTime.replace("T", " ")}'` : "'2024-11-01 00:00:00'";
         let formattedEndTime = endTime ? `'${endTime.replace("T", " ")}'` : "'2024-12-01 00:00:00'";
 
         let sql = "SELECT " + Array.from(selectedColumns).join(", ") + " FROM [QTDDB].[dbo].Quote Q";
 
-        selectedTables.forEach((table, index) => {
+        selectedTables.forEach((table) => {
             if (table !== "Quote") {
                 let joinKey = `Quote-${table}`;
                 if (tableJoins[joinKey]) {
