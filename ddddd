@@ -1,0 +1,41 @@
+Step-by-Step Description of Solution Two
+
+This solution enhances the reporting architecture by introducing a Change Data Capture (CDC) mechanism to keep the Reporting Database up to date in near real-time. This approach improves performance, scalability, and data consistency while reducing the load on the operational database.
+
+
+1. User Interaction
+	•	Users interact with the SPV2 Application to request, view, and download reports.
+	•	Reports are generated using data from the Reporting Database instead of querying the main operational database directly.
+
+
+2. Operational Database (MS-SQL Server)
+	•	The primary database supports daily business operations.
+	•	Instead of running heavy queries on this database, the system captures only the latest changes and transfers them to the Reporting Database.
+
+
+
+3. Change Data Capture (CDC) Mechanism
+	•	The system captures only changes from the operational database using Debezium CDC Tool.
+	•	This eliminates the need for full data synchronization, reducing latency and system overhead.
+	•	Debezium continuously streams changes, ensuring that the Reporting Database stays up to date without batch delays.
+
+
+4. Reporting Database (NoSQL)
+	•	A NoSQL database stores reporting data for optimized read performance.
+	•	The CDC process applies changes to ensure the Reporting Database is continuously updated.
+	•	The SPV2 Application queries the Reporting Database instead of the main database, improving system efficiency.
+
+5. SPV2 Application (Report Querying)
+	•	The SPV2 Application fetches data from the Reporting Database when generating reports.
+	•	Users receive real-time or near real-time reports without affecting operational performance.
+
+Key Benefits of This Approach
+
+✅ Near Real-Time Data Sync – CDC ensures that the Reporting Database is always updated without relying on periodic batch jobs.
+✅ Lower Load on Main Database – Reporting queries are offloaded to the NoSQL database, preventing slowdowns in daily operations.
+✅ Scalability – The NoSQL database handles large volumes of reporting data, improving query speed.
+✅ Better User Experience – Users get faster report generation without delays caused by traditional batch processing.
+
+
+
+
