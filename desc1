@@ -30,3 +30,11 @@ Step-by-Step Explanation of the Updated Context Diagram
 	•	Sends an alert notification via email once the report is ready.
 	•	Includes a secure link for downloading the report from the file server.
 	•	If a report is taking longer than expected, the system can also send a reminder alert.
+
+
+Key Benefits of the Updated Architecture
+
+✅ Improved Security – No direct email attachments; reports are stored securely and accessed via a link.
+✅ Better User Experience – Users receive alerts when reports are ready, avoiding unnecessary waiting.
+✅ Scalability & Performance Optimization – File storage and API-based retrieval ensure that large reports don’t impact system performance.
+✅ Enhanced Report Tracking – The system can log when reports are generated and when users access them.
