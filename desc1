@@ -1,0 +1,32 @@
+Step-by-Step Explanation of the Updated Context Diagram
+
+1. User Interaction
+	•	The user interacts with the SPV2 Application to request, view, and download reports.
+	•	Instead of waiting for the report to be generated, the system sends an alert once the report is ready.
+
+2. Database & Data Warehouse (Data Sources)
+	•	The primary database (MS-SQL Server) handles real-time operational data for reports.
+	•	The data warehouse stores historical data, optimizing performance by preventing direct heavy queries on live data.
+	•	Daily backups ensure historical reports remain accessible without overloading the main database.
+
+3. SPV2 Application (Report Request Handling)
+	•	Users submit report requests via the SPV2 Application.
+	•	The system determines whether the report requires live data (fetched from the main database) or historical data (retrieved from the data warehouse).
+	•	The SPV2 Application calls the Web Services API to process the report.
+
+4. Web Services Application (Report Processing & Storage)
+	•	The Web Services Application is responsible for:
+	•	Fetching and processing data.
+	•	Generating the requested report.
+	•	Storing the completed report in the File Server for later retrieval.
+	•	Triggering an alert once the report is ready.
+
+5. File Server (Report Storage & Access)
+	•	Once the report is generated, it is saved on the file server.
+	•	Users can retrieve the report via a secure download link instead of receiving direct email attachments (enhancing security).
+
+6. Email System (Alerts & Notifications)
+	•	Instead of attaching large reports to emails, the system:
+	•	Sends an alert notification via email once the report is ready.
+	•	Includes a secure link for downloading the report from the file server.
+	•	If a report is taking longer than expected, the system can also send a reminder alert.
