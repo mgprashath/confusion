@@ -1,0 +1,41 @@
+Solution Three: Automated Report Refresh Using Precomputed Tables
+
+This solution improves reporting performance by using a precomputed table (Materialized View Simulation) that is incrementally refreshed based on the UpdatedDate in the Quote Table. By automating the refresh using a SQL Server Agent Job and a Stored Procedure, reports are updated without impacting the main operational database.
+
+
+Step-by-Step Description of Solution Three
+
+1. User Interaction
+	•	Users interact with the SPV2 Application to request, view, and download reports.
+	•	The application retrieves data from the precomputed reporting table instead of running complex queries on live data.
+
+
+
+2. Quote Table (Source Data)
+	•	This table stores quote records, and each row has an UpdatedDate column.
+	•	The system tracks changes using this column, ensuring only modified or new data is processed.
+
+
+3. Stored Procedure (Incremental Refresh)
+	•	A Stored Procedure (RefreshQuoteReport) is executed to:
+	•	Update existing records in the precomputed table if data has changed.
+	•	Insert new records if a quote was added since the last refresh.
+	•	Delete records that no longer exist in the main database.
+	•	This ensures that only new or updated data is processed, reducing database load.
+
+4. SQL Agent Job (Automated Execution)
+	•	The SQL Agent Job runs the stored procedure at scheduled intervals (e.g., hourly or daily).
+	•	This process ensures the precomputed table stays up to date without requiring real-time queries on the source tables.
+
+5. Precomputed Table for Reports (Materialized View)
+	•	This table stores a denormalized version of quote data optimized for reporting.
+	•	The SPV2 Application retrieves data from this table, ensuring fast query execution.
+
+Key Benefits of This Approach
+
+✅ Fast Report Queries – SPV2 retrieves precomputed data instead of querying multiple live tables.
+✅ Efficient Data Updates – Only modified or new records are processed, minimizing overhead.
+✅ Scalability – Reduces stress on the main database, making the system more efficient as data grows.
+✅ Automated Process – SQL Agent Job ensures reports remain updated without manual intervention.
+
+
