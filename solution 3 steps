@@ -1,0 +1,112 @@
+Finalized Steps for Automated Report Refresh Using UpdatedDate
+
+Figure: A context diagram illustrating the use of a precomputed report table (DailyQuoteReport) that is updated via an hourly refresh procedure for efficient reporting. This approach allows the system to avoid scanning all quote records for each report generation by keeping a snapshot of the data that only changes incrementally. In the following steps, we outline how to implement this solution using SQL Server (for the data refresh) and the SPV2 application (for consuming the precomputed data).
+
+Step 1: Create a Precomputed Table for Reports
+
+Begin by creating a dedicated table to store the report data. This table will serve as a snapshot of the latest quotes needed for reporting, reducing the need for complex joins on the fly. For example, a table DailyQuoteReport can store key fields from the Quote along with an UpdatedDate timestamp:
+
+CREATE TABLE DailyQuoteReport (
+    ReportID INT IDENTITY(1,1) PRIMARY KEY,
+    QuoteID INT,
+    CustomerID INT,
+    CustomerName VARCHAR(255),
+    QuoteAmount DECIMAL(18,2),
+    QuoteDate DATE,
+    UpdatedDate DATETIME,
+    ReportGeneratedAt DATETIME DEFAULT GETDATE()
+);
+
+This table will hold one row per quote for reporting purposes. The ReportGeneratedAt column records when the snapshot entry was created or last updated.
+
+Step 2: Create an Incremental Refresh Stored Procedure
+
+Implement a stored procedure that refreshes the DailyQuoteReport table incrementally. It should update existing report rows if their source data changed, insert new quotes that were added, and delete quotes that have been removed from the source. By comparing each quote’s UpdatedDate, the procedure can determine which records need refreshing. For example:
+
+CREATE PROCEDURE RefreshQuoteReport
+AS
+BEGIN
+    -- Step 1: Update changed records
+    UPDATE dr
+    SET 
+        dr.CustomerName = q.CustomerName,
+        dr.QuoteAmount = q.QuoteAmount,
+        dr.UpdatedDate = q.UpdatedDate,
+        dr.ReportGeneratedAt = GETDATE()
+    FROM DailyQuoteReport dr
+    JOIN Quote q 
+      ON dr.QuoteID = q.QuoteID
+    WHERE q.UpdatedDate > dr.UpdatedDate;
+
+    -- Step 2: Insert new records (quotes added in the last hour)
+    INSERT INTO DailyQuoteReport (QuoteID, CustomerID, CustomerName, QuoteAmount, QuoteDate, UpdatedDate)
+    SELECT q.QuoteID, q.CustomerID, q.CustomerName, q.QuoteAmount, q.QuoteDate, q.UpdatedDate
+    FROM Quote q
+    WHERE q.UpdatedDate >= DATEADD(HOUR, -1, GETDATE())
+      AND NOT EXISTS (
+          SELECT 1 FROM DailyQuoteReport dr WHERE dr.QuoteID = q.QuoteID
+      );
+
+    -- Step 3: Remove deleted quotes
+    DELETE FROM dr
+    FROM DailyQuoteReport dr
+    LEFT JOIN Quote q 
+      ON dr.QuoteID = q.QuoteID
+    WHERE q.QuoteID IS NULL;
+END;
+
+In this procedure:
+	•	The first part updates any quote in the report snapshot that has a more recent UpdatedDate in the source Quote table.
+	•	The second part inserts new quotes (in this example, any quote updated in the last hour that doesn’t yet exist in the report table).
+	•	The third part deletes entries for quotes that no longer exist in the source.
+
+You can adjust the time window (DATEADD(HOUR, -1, GETDATE())) based on how frequently the procedure runs, ensuring new records are captured each run.
+
+Step 3: Automate Execution Using SQL Server Agent
+
+To keep the DailyQuoteReport table up-to-date, schedule the refresh procedure to run automatically at regular intervals (e.g. hourly) using SQL Server Agent. This ensures the report data is refreshed without manual intervention. For example, you can set up a SQL Server Agent job as follows:
+	1.	Open SQL Server Management Studio (SSMS) and expand SQL Server Agent.
+	2.	Right-click Jobs and select New Job. Name the job “Refresh Daily Quote Report” (or similar).
+	3.	Add a New Step to the job: choose Transact-SQL Script (T-SQL) as the type, and enter the command:
+
+EXEC RefreshQuoteReport;
+
+
+	4.	Next, under Schedules, create a schedule to run the job every hour (or as needed). Enable the schedule.
+
+Once this job is enabled, SQL Server Agent will execute RefreshQuoteReport on the set schedule, updating the report table incrementally with minimal load (since it processes only changes each time).
+
+Step 4: Optimize for Performance
+
+To ensure the incremental refresh runs efficiently, add appropriate indexes and optimizations:
+	•	Index on UpdatedDate: Create an index on the Quote(UpdatedDate) column to speed up the search for recently changed or new quotes.
+	•	Index on QuoteID: Ensure QuoteID is indexed (or is a primary key) on both the source and report tables for fast join and lookup performance.
+	•	Consider Index on CustomerID or other query fields: If the reports frequently filter by customer or date, you might add indexes on those columns in DailyQuoteReport as well.
+
+For example, to index the UpdatedDate in the Quote table:
+
+CREATE INDEX IX_Quote_UpdatedDate 
+ON Quote (UpdatedDate);
+
+This index helps the WHERE q.UpdatedDate > ... and q.UpdatedDate >= ... lookups in the refresh procedure to execute quickly.
+
+Step 5: Modify SPV2 Application to Use the Precomputed Table
+
+Finally, update the SPV2 application (or whatever reporting interface is used) to query data from DailyQuoteReport instead of the raw Quote table and related tables. This means reports will fetch already-prepared data, drastically reducing query complexity and execution time. For example, a report query might become:
+
+SELECT *
+FROM DailyQuoteReport
+WHERE QuoteDate BETWEEN @StartDate AND @EndDate;
+
+You can join this precomputed table with others (if needed) on keys like CustomerID, but the heavy lifting of filtering relevant quotes and computing their fields is already done. The application’s report logic should now treat DailyQuoteReport as the source of truth for quote data within the specified date range.
+
+Final Outcome
+
+Figure: System architecture after implementing the incremental refresh. The SQL Agent job (RefreshQuoteReport) updates the DailyQuoteReport table on schedule, and the SPV2 application reads from this table for reporting. This enhanced architecture ensures that reporting is fast and does not strain the primary tables, while still keeping data reasonably fresh (updated every hour or as scheduled).
+
+As a result of these changes:
+	•	✅ Reports are refreshed hourly with only the latest changes, providing near real-time data without full reprocessing.
+	•	✅ No unnecessary reprocessing of the entire dataset, significantly improving query performance and reducing database load.
+	•	✅ The SPV2 application retrieves reports from a lightweight snapshot table, so end-users experience faster report load times and the primary database tables remain unaffected by heavy read queries.
+
+Additionally, consider implementing logging or alerts for the refresh job. For instance, the stored procedure can log its actions to a table or send an email on failure, and the SQL Agent job can be configured to notify an admin on error. This way, you can track when updates occur and quickly catch any issues in the refresh process.
