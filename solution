@@ -1,5 +1,4 @@
 <style>
-
     .selector {
         border: 1px solid #ccc;
         display: flex;
@@ -23,102 +22,72 @@
         margin-top: 20px;
     }
 </style>
+
 <div class="container pt-5 pb-5">
     <div class="row">
         <div class="col-3">
             <div class="selector">
                 <div class="section">
                     <h3>Select Tables</h3>
-                    <label class="checkboxContainer" tabindex="0">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Quote </span>
-
-                        <input type="checkbox" id="confirm-answers" name="tablecheckbox" onchange="checkAgreeTerms();">
-
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="tablecheckbox" value="Quote" onchange="toggleAccordion(this);">
                     </label>
-                    <label class="checkboxContainer" tabindex="1">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Quote Status </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="tablecheckbox" value="QuoteStatus" onchange="toggleAccordion(this);">
                     </label>
-                    <label class="checkboxContainer" tabindex="2">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Vehicle Keeper </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="tablecheckbox" value="VehicleKeeper" onchange="toggleAccordion(this);">
                     </label>
-                    <label class="checkboxContainer" tabindex="3">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Contact Detail </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="tablecheckbox" value="ContactDetail" onchange="toggleAccordion(this);">
                     </label>
-                    <label class="checkboxContainer" tabindex="4">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Tax Rate </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="tablecheckbox" value="TaxRate" onchange="toggleAccordion(this);">
                     </label>
                 </div>
             </div>
         </div>
+
         <div class="col-9">
             <div class="selector">
                 <div class="section">
                     <h3>Select Columns</h3>
                     <div id="columns-list">
                         <small>Select a table first</small>
-                        <div id="accordion">
-                            <h3>Section 1</h3>
-                            <div>
-                                <p>
-                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
-                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
-                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
-                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
-                                </p>
+                        <div id="accordion" style="display: none;">
+                            <h3 class="accordion-header" data-table="Quote">Quote Columns</h3>
+                            <div class="accordion-content">
+                                <label><input type="checkbox" value="QuoteID"> QuoteID</label>
+                                <label><input type="checkbox" value="QuoteAmount"> QuoteAmount</label>
                             </div>
-                            <h3>Section 2</h3>
-                            <div>
-                                <p>
-                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
-                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
-                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
-                                    suscipit faucibus urna.
-                                </p>
+
+                            <h3 class="accordion-header" data-table="QuoteStatus">Quote Status Columns</h3>
+                            <div class="accordion-content">
+                                <label><input type="checkbox" value="StatusID"> StatusID</label>
+                                <label><input type="checkbox" value="StatusName"> StatusName</label>
                             </div>
-                            <h3>Section 3</h3>
-                            <div>
-                                <p>
-                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
-                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
-                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
-                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
-                                </p>
-                                <ul>
-                                    <li>List item one</li>
-                                    <li>List item two</li>
-                                    <li>List item three</li>
-                                </ul>
+
+                            <h3 class="accordion-header" data-table="VehicleKeeper">Vehicle Keeper Columns</h3>
+                            <div class="accordion-content">
+                                <label><input type="checkbox" value="KeeperID"> KeeperID</label>
+                                <label><input type="checkbox" value="KeeperName"> KeeperName</label>
                             </div>
-                            <h3>Section 4</h3>
-                            <div>
-                                <p>
-                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
-                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
-                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
-                                    mauris vel est.
-                                </p>
-                                <p>
-                                    Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
-                                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-                                    inceptos himenaeos.
-                                </p>
+
+                            <h3 class="accordion-header" data-table="ContactDetail">Contact Detail Columns</h3>
+                            <div class="accordion-content">
+                                <label><input type="checkbox" value="ContactID"> ContactID</label>
+                                <label><input type="checkbox" value="PhoneNumber"> PhoneNumber</label>
+                            </div>
+
+                            <h3 class="accordion-header" data-table="TaxRate">Tax Rate Columns</h3>
+                            <div class="accordion-content">
+                                <label><input type="checkbox" value="TaxID"> TaxID</label>
+                                <label><input type="checkbox" value="TaxPercentage"> TaxPercentage</label>
                             </div>
                         </div>
                     </div>
@@ -130,6 +99,36 @@
 
 <script>
     $(function () {
-        $("#accordion").accordion();
+        $("#accordion").accordion({
+            collapsible: true,
+            active: false
+        });
     });
+
+    function toggleAccordion(checkbox) {
+        let tableName = checkbox.value;
+        let accordion = $("#accordion");
+
+        if (checkbox.checked) {
+            accordion.show(); // Show the accordion
+            $(".accordion-header").each(function () {
+                if ($(this).data("table") === tableName) {
+                    $(this).next().show();
+                    $(this).show();
+                }
+            });
+        } else {
+            $(".accordion-header").each(function () {
+                if ($(this).data("table") === tableName) {
+                    $(this).next().hide();
+                    $(this).hide();
+                }
+            });
+
+            // Hide the accordion completely if no checkboxes are checked
+            if ($("input[name='tablecheckbox']:checked").length === 0) {
+                accordion.hide();
+            }
+        }
+    }
 </script>
