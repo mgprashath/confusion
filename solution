@@ -1,3 +1,135 @@
-Proposed System Architectures for the Reporting Module
+<style>
 
-Description: This document outlines three possible system designs for the reporting module, focusing on scalability, performance, and flexibility. Each solution is evaluated based on ease of integration, efficiency, and expandability to meet business reporting needs.
+    .selector {
+        border: 1px solid #ccc;
+        display: flex;
+        gap: 20px;
+    }
+
+    .section {
+        border: 1px solid #ccc;
+        margin: 15px;
+        padding: 10px;
+        width: 300px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 150px;
+        margin-top: 10px;
+    }
+
+    .date-section {
+        margin-top: 20px;
+    }
+</style>
+<div class="container pt-5 pb-5">
+    <div class="row">
+        <div class="col-3">
+            <div class="selector">
+                <div class="section">
+                    <h3>Select Tables</h3>
+                    <label class="checkboxContainer" tabindex="0">
+                        <span class="smallText"> Quote </span>
+
+                        <input type="checkbox" id="confirm-answers" name="tablecheckbox" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="1">
+                        <span class="smallText"> Quote Status </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="2">
+                        <span class="smallText"> Vehicle Keeper </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="3">
+                        <span class="smallText"> Contact Detail </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="4">
+                        <span class="smallText"> Tax Rate </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="selector">
+                <div class="section">
+                    <h3>Select Columns</h3>
+                    <div id="columns-list">
+                        <small>Select a table first</small>
+                        <div id="accordion">
+                            <h3>Section 1</h3>
+                            <div>
+                                <p>
+                                    Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer
+                                    ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit
+                                    amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut
+                                    odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.
+                                </p>
+                            </div>
+                            <h3>Section 2</h3>
+                            <div>
+                                <p>
+                                    Sed non urna. Donec et ante. Phasellus eu ligula. Vestibulum sit amet
+                                    purus. Vivamus hendrerit, dolor at aliquet laoreet, mauris turpis porttitor
+                                    velit, faucibus interdum tellus libero ac justo. Vivamus non quam. In
+                                    suscipit faucibus urna.
+                                </p>
+                            </div>
+                            <h3>Section 3</h3>
+                            <div>
+                                <p>
+                                    Nam enim risus, molestie et, porta ac, aliquam ac, risus. Quisque lobortis.
+                                    Phasellus pellentesque purus in massa. Aenean in pede. Phasellus ac libero
+                                    ac tellus pellentesque semper. Sed ac felis. Sed commodo, magna quis
+                                    lacinia ornare, quam ante aliquam nisi, eu iaculis leo purus venenatis dui.
+                                </p>
+                                <ul>
+                                    <li>List item one</li>
+                                    <li>List item two</li>
+                                    <li>List item three</li>
+                                </ul>
+                            </div>
+                            <h3>Section 4</h3>
+                            <div>
+                                <p>
+                                    Cras dictum. Pellentesque habitant morbi tristique senectus et netus
+                                    et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in
+                                    faucibus orci luctus et ultrices posuere cubilia Curae; Aenean lacinia
+                                    mauris vel est.
+                                </p>
+                                <p>
+                                    Suspendisse eu nisl. Nullam ut libero. Integer dignissim consequat lectus.
+                                    Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
+                                    inceptos himenaeos.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#accordion").accordion();
+    });
+</script>
