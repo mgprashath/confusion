@@ -1,14 +1,245 @@
-document.querySelectorAll('.repMobile-menu a').forEach(item => {
-    item.addEventListener('touchstart', () => {
-        item.classList.add('hovered');
+<style>
+
+    .selector {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        min-width: 280px;
+    }
+
+    .section {
+        border: 1px solid #ccc;
+        margin: 15px;
+        padding: 10px;
+        width: 100%;
+        min-width: 25px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 150px;
+        margin-top: 10px;
+    }
+
+    .date-section {
+        margin-top: 20px;
+    }
+
+    .accordion{
+        display:none;
+    }
+
+    .ui-accordion-header {
+        background-color: #0f3549;
+        color: white;
+        font-size: inherit;
+        line-height: 40px;
+    }
+    .dow {
+        background-color: #0f3549;
+    }
+    .next, .prev {
+        color: #0f3549;
+        background-color: white;
+    }
+</style>
+<div class="container pt-5 pb-5">
+    <div class="row">
+        <div class="selector">
+            <div class="col-3 ">
+
+                <div class="section">
+                    <h3>Select Tables</h3>
+                    <label class="checkboxContainer" tabindex="0">
+                        <span class="smallText"> Quote </span>
+
+                        <input type="checkbox" id="confirm-answers" name="tablecheckbox" onchange="checkAgreeTerms();" disabled checked>
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="1">
+                        <span class="smallText"> Quote Status </span>
+
+                        <input type="checkbox" id="toggleQuoteStatus" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="2">
+                        <span class="smallText"> Vehicle Keeper </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="3">
+                        <span class="smallText"> Contact Detail </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="checkboxContainer" tabindex="4">
+                        <span class="smallText"> Tax Rate </span>
+
+                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
+
+                        <span class="checkmark"></span>
+                    </label>
+                    <br />
+                    <!-- Date Selection -->
+                    <div>
+                        <h3>Select Date Range</h3>
+                        <div>
+                            <span class="mb-2 font-weight-bold">
+                                <strong class="d-block">
+                                    From
+                                </strong>
+                            </span>
+
+                            <div class="bh-input-inline mt-2">
+                                <div class="bh-input-inline">
+                                    <div id="fromdatepicker" class="input-group date">
+                                        <input class="form-control" type="text" id="from" name="DateOfBirth" onkeydown="return false" />
+                                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div>
+                            <span class="mb-2 font-weight-bold">
+                                <strong class="d-block">
+                                    To
+                                </strong>
+                            </span>
+
+                            <div class="bh-input-inline mt-2">
+                                <div class="bh-input-inline">
+                                    <div id="datepickerto" class="input-group date">
+                                        <input class="form-control" type="text" id="to" name="DateOfBirth" onkeydown="return false" />
+                                        <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br />
+
+                        <div>
+                            <button class="btn btnGradient" id="search" onclick="SearchClick()" aria-label="Search details">SEARCH</button>
+                        </div>
+
+                        <br />
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="section">
+                    <h3>Select Columns</h3>
+                    <div id="columns-list">
+                        <small>Select a table first</small>
+                        <div id="columns">
+                            <h3>Quote</h3>
+                            <div>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">Quote ID</span>
+                                    <input type="checkbox" value="Q.QuoteID" disabled checked />
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">IsQuoteSP</span>
+                                    <input type="checkbox" value="Q.IsQuoteSP">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">MyCars Flag</span>
+                                    <input type="checkbox" value="Q.MyCarsFlag">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">SP Gross Sacrifice to Cover Costs</span>
+                                    <input type="checkbox" value="Q.SPGrossSactoCoverCosts">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">SP Actual Gross Sacrifice Made</span>
+                                    <input type="checkbox" value="Q.SPActualGrossSacMade">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <br />
+                            </div>
+                            <div id="secQuoteStatus">
+                                <h3>Quote Status</h3>
+                                <div>
+                                    <label class="checkboxContainer">
+                                        <span class="smallText">Quote Status Name</span>
+                                        <input type="checkbox" value="QS.QuoteStatusName">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <h3>Vehicle Keeper</h3>
+                            <div>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">Payroll ID</span>
+                                    <input type="checkbox" value="Vk.PayrollID">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">First Name</span>
+                                    <input type="checkbox" value="Vk.FirstName">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">Surname</span>
+                                    <input type="checkbox" value="Vk.Surname">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <h3>Contact Detail</h3>
+                            <div>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">Email Address</span>
+                                    <input type="checkbox" value="Cd.EmailAddress">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">Post Code</span>
+                                    <input type="checkbox" value="Cd.PostCode">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <label class="checkboxContainer">
+                                    <span class="smallText">Mobile Number</span>
+                                    <input type="checkbox" value="Cd.MobileTelephoneNo">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="section">
+                    <h3>Selected Columns</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#columns").accordion();
     });
-    item.addEventListener('touchend', () => {
-        setTimeout(() => item.classList.remove('hovered'), 500);
+
+    $(document).ready(function () {
+        $('#toggleQuoteStatus').change(function () {
+            if ($(this).is(":checked")) {
+                $("#secQuoteStatus").show();
+            } else {
+                $("#secQuoteStatus").hide();
+            }
+        });
     });
-});
 
-
-
-.repMobile-menu a.hovered {
-    background-color: #004494; /* Same as hover */
-}
+</script>
