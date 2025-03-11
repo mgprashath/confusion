@@ -25,8 +25,8 @@
         margin-top: 20px;
     }
 
-    .accordion{
-        display:none;
+    .accordion {
+        display: none;
     }
 
     .ui-accordion-header {
@@ -35,54 +35,46 @@
         font-size: inherit;
         line-height: 40px;
     }
+
     .dow {
         background-color: #0f3549;
     }
+
     .next, .prev {
         color: #0f3549;
         background-color: white;
     }
 </style>
+
 <div class="container pt-5 pb-5">
     <div class="row">
         <div class="selector">
-            <div class="col-3 ">
-
+            <div class="col-3">
                 <div class="section">
                     <h3>Select Tables</h3>
-                    <label class="checkboxContainer" tabindex="0">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Quote </span>
-
-                        <input type="checkbox" id="confirm-answers" name="tablecheckbox" onchange="checkAgreeTerms();" disabled checked>
-
+                        <input type="checkbox" id="toggleQuote" disabled checked>
                         <span class="checkmark"></span>
                     </label>
-                    <label class="checkboxContainer" tabindex="1">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Quote Status </span>
-
-                        <input type="checkbox" id="toggleQuoteStatus" onchange="checkAgreeTerms();">
-
+                        <input type="checkbox" id="toggleQuoteStatus">
                         <span class="checkmark"></span>
                     </label>
-                    <label class="checkboxContainer" tabindex="2">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Vehicle Keeper </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
+                        <input type="checkbox" id="toggleVehicleKeeper">
                         <span class="checkmark"></span>
                     </label>
-                    <label class="checkboxContainer" tabindex="3">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Contact Detail </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
+                        <input type="checkbox" id="toggleContactDetail">
                         <span class="checkmark"></span>
                     </label>
-                    <label class="checkboxContainer" tabindex="4">
+                    <label class="checkboxContainer">
                         <span class="smallText"> Tax Rate </span>
-
-                        <input type="checkbox" id="confirm-answers" onchange="checkAgreeTerms();">
-
+                        <input type="checkbox" id="toggleTaxRate">
                         <span class="checkmark"></span>
                     </label>
                     <br />
@@ -91,15 +83,12 @@
                         <h3>Select Date Range</h3>
                         <div>
                             <span class="mb-2 font-weight-bold">
-                                <strong class="d-block">
-                                    From
-                                </strong>
+                                <strong class="d-block">From</strong>
                             </span>
-
                             <div class="bh-input-inline mt-2">
                                 <div class="bh-input-inline">
                                     <div id="fromdatepicker" class="input-group date">
-                                        <input class="form-control" type="text" id="from" name="DateOfBirth" onkeydown="return false" />
+                                        <input class="form-control" type="text" id="from" name="DateOfBirth" onkeydown="return false">
                                         <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
@@ -108,31 +97,26 @@
                         <br />
                         <div>
                             <span class="mb-2 font-weight-bold">
-                                <strong class="d-block">
-                                    To
-                                </strong>
+                                <strong class="d-block">To</strong>
                             </span>
-
                             <div class="bh-input-inline mt-2">
                                 <div class="bh-input-inline">
                                     <div id="datepickerto" class="input-group date">
-                                        <input class="form-control" type="text" id="to" name="DateOfBirth" onkeydown="return false" />
+                                        <input class="form-control" type="text" id="to" name="DateOfBirth" onkeydown="return false">
                                         <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <br />
-
                         <div>
                             <button class="btn btnGradient" id="search" onclick="SearchClick()" aria-label="Search details">SEARCH</button>
                         </div>
-
                         <br />
                     </div>
                 </div>
             </div>
+
             <div class="col-4">
                 <div class="section">
                     <h3>Select Columns</h3>
@@ -143,32 +127,13 @@
                             <div>
                                 <label class="checkboxContainer">
                                     <span class="smallText">Quote ID</span>
-                                    <input type="checkbox" value="Q.QuoteID" disabled checked />
+                                    <input type="checkbox" value="Q.QuoteID" disabled checked>
                                     <span class="checkmark"></span>
                                 </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">IsQuoteSP</span>
-                                    <input type="checkbox" value="Q.IsQuoteSP">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">MyCars Flag</span>
-                                    <input type="checkbox" value="Q.MyCarsFlag">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">SP Gross Sacrifice to Cover Costs</span>
-                                    <input type="checkbox" value="Q.SPGrossSactoCoverCosts">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">SP Actual Gross Sacrifice Made</span>
-                                    <input type="checkbox" value="Q.SPActualGrossSacMade">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <br />
                             </div>
-                            <div id="secQuoteStatus">
+
+                            <!-- Accordion Sections -->
+                            <div id="secQuoteStatus" class="accordion">
                                 <h3>Quote Status</h3>
                                 <div>
                                     <label class="checkboxContainer">
@@ -178,47 +143,45 @@
                                     </label>
                                 </div>
                             </div>
-                            <h3>Vehicle Keeper</h3>
-                            <div>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">Payroll ID</span>
-                                    <input type="checkbox" value="Vk.PayrollID">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">First Name</span>
-                                    <input type="checkbox" value="Vk.FirstName">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">Surname</span>
-                                    <input type="checkbox" value="Vk.Surname">
-                                    <span class="checkmark"></span>
-                                </label>
+
+                            <div id="secVehicleKeeper" class="accordion">
+                                <h3>Vehicle Keeper</h3>
+                                <div>
+                                    <label class="checkboxContainer">
+                                        <span class="smallText">Payroll ID</span>
+                                        <input type="checkbox" value="Vk.PayrollID">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
                             </div>
-                            <h3>Contact Detail</h3>
-                            <div>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">Email Address</span>
-                                    <input type="checkbox" value="Cd.EmailAddress">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">Post Code</span>
-                                    <input type="checkbox" value="Cd.PostCode">
-                                    <span class="checkmark"></span>
-                                </label>
-                                <label class="checkboxContainer">
-                                    <span class="smallText">Mobile Number</span>
-                                    <input type="checkbox" value="Cd.MobileTelephoneNo">
-                                    <span class="checkmark"></span>
-                                </label>
+
+                            <div id="secContactDetail" class="accordion">
+                                <h3>Contact Detail</h3>
+                                <div>
+                                    <label class="checkboxContainer">
+                                        <span class="smallText">Email Address</span>
+                                        <input type="checkbox" value="Cd.EmailAddress">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="secTaxRate" class="accordion">
+                                <h3>Tax Rate</h3>
+                                <div>
+                                    <label class="checkboxContainer">
+                                        <span class="smallText">Tax Percentage</span>
+                                        <input type="checkbox" value="TR.TaxPercentage">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
                             </div>
                             <br />
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-4">
                 <div class="section">
                     <h3>Selected Columns</h3>
@@ -227,19 +190,24 @@
         </div>
     </div>
 </div>
+
 <script>
-    $(function () {
-        $("#columns").accordion();
-    });
-
     $(document).ready(function () {
-        $('#toggleQuoteStatus').change(function () {
-            if ($(this).is(":checked")) {
-                $("#secQuoteStatus").show();
-            } else {
-                $("#secQuoteStatus").hide();
-            }
-        });
-    });
+        // Function to handle checkbox toggle for accordion sections
+        function toggleSection(checkboxId, sectionId) {
+            $("#" + checkboxId).change(function () {
+                if ($(this).is(":checked")) {
+                    $("#" + sectionId).slideDown();
+                } else {
+                    $("#" + sectionId).slideUp();
+                }
+            });
+        }
 
+        // Attach toggle function to each checkbox and section
+        toggleSection("toggleQuoteStatus", "secQuoteStatus");
+        toggleSection("toggleVehicleKeeper", "secVehicleKeeper");
+        toggleSection("toggleContactDetail", "secContactDetail");
+        toggleSection("toggleTaxRate", "secTaxRate");
+    });
 </script>
