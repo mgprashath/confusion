@@ -9,7 +9,10 @@ function updateContainer() {
 
     // Add boxes for checked checkboxes
     checkedBoxes.forEach(cb => {
-        const boxId = "box-" + cb.value.replace(/\s+/g, '-');
+        const boxValue = cb.value.trim(); // Ensure no accidental empty values
+        if (!boxValue || boxValue === "on") return; // Ignore invalid values
+
+        const boxId = "box-" + boxValue.replace(/\s+/g, '-');
 
         // Check if the box already exists (avoid duplicates)
         if (!document.getElementById(boxId)) {
@@ -17,7 +20,7 @@ function updateContainer() {
             box.className = "box";
             box.id = boxId;
             box.setAttribute("data-removable", "true"); // Mark as removable
-            box.innerHTML = `${cb.value} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
+            box.innerHTML = `${boxValue} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
 
             container.appendChild(box);
         }
