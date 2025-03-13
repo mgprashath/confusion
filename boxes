@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkbox Controlled Boxes</title>
+    <title>Checkbox Controlled Boxes with Close Button</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,6 +25,16 @@
             align-items: center;
             gap: 10px;
             position: relative;
+        }
+        .close-btn {
+            cursor: pointer;
+            background: red;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-size: 14px;
+            line-height: 1;
         }
     </style>
 </head>
@@ -48,15 +58,26 @@
                 const box = document.createElement("div");
                 box.className = "box";
                 box.id = boxId;
-                box.textContent = checkbox.value;
+                box.innerHTML = `${checkbox.value} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
 
                 // Append to container
                 container.appendChild(box);
             } else {
-                // Remove the box
-                const box = document.getElementById(boxId);
-                if (box) box.remove();
+                removeBox(boxId);
             }
+        }
+
+        function removeBox(boxId, button = null) {
+            const box = document.getElementById(boxId);
+            if (box) box.remove();
+
+            // Uncheck the corresponding checkbox
+            const checkboxes = document.querySelectorAll("input[type='checkbox']");
+            checkboxes.forEach(cb => {
+                if ("box-" + cb.value.replace(/\s+/g, '-') === boxId) {
+                    cb.checked = false;
+                }
+            });
         }
     </script>
 
