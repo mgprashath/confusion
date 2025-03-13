@@ -1,0 +1,46 @@
+function updateContainer() {
+    const container = document.getElementById("boxContainer");
+    container.innerHTML = ""; // Clear existing boxes
+
+    // Get all checked checkboxes
+    const checkedBoxes = document.querySelectorAll("input[type='checkbox']:checked");
+
+    // Add boxes for checked checkboxes
+    checkedBoxes.forEach(cb => {
+        const boxId = "box-" + cb.value.replace(/\s+/g, '-');
+
+        const box = document.createElement("div");
+        box.className = "box";
+        box.id = boxId;
+        box.innerHTML = `${cb.value} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
+
+        container.appendChild(box);
+    });
+}
+
+function refreshContainer() {
+    updateContainer();
+}
+
+
+function toggleBox(checkbox) {
+    const container = document.getElementById("boxContainer");
+    const boxId = "box-" + checkbox.value.replace(/\s+/g, '-');
+
+    if (checkbox.checked) {
+        // Create a new box
+        const box = document.createElement("div");
+        box.className = "box";
+        box.id = boxId;
+        box.innerHTML = `${checkbox.value} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
+
+        // Append to container
+        container.appendChild(box);
+    } else {
+        removeBox(boxId);
+    }
+}
+
+function toggleBox(checkbox) {
+    updateContainer();
+}
