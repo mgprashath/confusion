@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkbox Controlled Boxes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            min-height: 100px;
+        }
+        .box {
+            background-color: lightblue;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <label><input type="checkbox" value="Box 1" onchange="toggleBox(this)"> Box 1</label>
+    <label><input type="checkbox" value="Box 2" onchange="toggleBox(this)"> Box 2</label>
+    <label><input type="checkbox" value="Box 3" onchange="toggleBox(this)"> Box 3</label>
+    <label><input type="checkbox" value="Box 4" onchange="toggleBox(this)"> Box 4</label>
+    <label><input type="checkbox" value="Box 5" onchange="toggleBox(this)"> Box 5</label>
+
+    <div class="container" id="boxContainer"></div>
+
+    <script>
+        function toggleBox(checkbox) {
+            const container = document.getElementById("boxContainer");
+            const boxId = "box-" + checkbox.value.replace(/\s+/g, '-'); // Unique ID for each box
+
+            if (checkbox.checked) {
+                // Create a new box
+                const box = document.createElement("div");
+                box.className = "box";
+                box.id = boxId;
+                box.textContent = checkbox.value;
+
+                // Append to container
+                container.appendChild(box);
+            } else {
+                // Remove the box
+                const box = document.getElementById(boxId);
+                if (box) box.remove();
+            }
+        }
+    </script>
+
+</body>
+</html>
