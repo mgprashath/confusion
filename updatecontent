@@ -1,0 +1,25 @@
+function updateContainer() {
+    const container = document.getElementById("boxContainer");
+
+    // Remove only dynamically added boxes (those with a close button)
+    container.querySelectorAll(".box[data-removable='true']").forEach(box => box.remove());
+
+    // Get all checked checkboxes that are NOT disabled
+    const checkedBoxes = document.querySelectorAll("input[type='checkbox']:checked:not([disabled])");
+
+    // Add boxes for checked checkboxes
+    checkedBoxes.forEach(cb => {
+        const boxId = "box-" + cb.value.replace(/\s+/g, '-');
+
+        // Check if the box already exists (avoid duplicates)
+        if (!document.getElementById(boxId)) {
+            const box = document.createElement("div");
+            box.className = "box";
+            box.id = boxId;
+            box.setAttribute("data-removable", "true"); // Mark as removable
+            box.innerHTML = `${cb.value} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
+
+            container.appendChild(box);
+        }
+    });
+}
