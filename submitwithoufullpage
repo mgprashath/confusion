@@ -1,0 +1,20 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $("#sqlGeneratorForm").on("submit", function (event) {
+        event.preventDefault(); // Prevent full page reload
+
+        $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: $(this).serialize(),
+            success: function (response) {
+                $("#sqlGeneratorContainer").html(response);
+            },
+            error: function () {
+                alert("Error generating SQL.");
+            }
+        });
+    });
+});
+</script>
