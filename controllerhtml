@@ -1,0 +1,36 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function generateSQL() {
+    let selectedTables = [];
+    let selectedColumns = [];
+
+    $("input[name='tablecheckbox']:checked").each(function() {
+        selectedTables.push($(this).val());
+    });
+
+    $("input[name='columncheckbox']:checked").each(function() {
+        selectedColumns.push($(this).val());
+    });
+
+    let startTime = $("#startTime").val();
+    let endTime = $("#endTime").val();
+
+    $.ajax({
+        url: "/api/sqlgenerator/generate",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            Tables: selectedTables,
+            Columns: selectedColumns,
+            StartTime: startTime ? startTime : null,
+            EndTime: endTime ? endTime : null
+        }),
+        success: function(response) {
+            $("#sqlOutput").val(response.GeneratedSQL);
+        },
+        error: function(xhr) {
+            alert("Error: " + xhr.responseText);
+        }
+    });
+}
+</script>
