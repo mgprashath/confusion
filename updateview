@@ -1,0 +1,43 @@
+@model YourNamespace.Models.QueryRequest
+
+<form id="sqlGeneratorForm" method="post" action="@Url.Action("GenerateSQL", "SQLGenerator")">
+    <div>
+        <h3>Select Tables</h3>
+        @foreach (var table in new List<string> { "Quote", "QuoteStatus", "Client", "VehicleKeeper", "ContactDetail", "TaxRate" })
+        {
+            <label>
+                <input type="checkbox" name="Tables" value="@table" />
+                @table
+            </label><br />
+        }
+    </div>
+
+    <div>
+        <h3>Select Columns</h3>
+        @foreach (var column in new List<string> { "Quote.QuoteID", "Quote.CreationDateTime", "Client.TradingName", "VehicleKeeper.FirstName" })
+        {
+            <label>
+                <input type="checkbox" name="Columns" value="@column" />
+                @column
+            </label><br />
+        }
+    </div>
+
+    <div>
+        <h3>Select Date Range</h3>
+        <label>Start Time:</label>
+        <input type="datetime-local" name="StartTime" />
+
+        <label>End Time:</label>
+        <input type="datetime-local" name="EndTime" />
+    </div>
+
+    <button type="submit">Generate SQL</button>
+</form>
+
+<!-- Display Generated SQL -->
+@if (ViewBag.GeneratedSQL != null)
+{
+    <h3>Generated SQL Query</h3>
+    <textarea readonly>@ViewBag.GeneratedSQL</textarea>
+}
