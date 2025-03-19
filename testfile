@@ -1,0 +1,361 @@
+@using LP.QTO.Net.Models
+@model  QueryRequestViewModel
+
+<style>
+
+    .selector {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        min-width: 280px;
+    }
+
+    .section {
+        border: 1px solid #ccc;
+        margin: 15px;
+        padding: 10px;
+        width: 100%;
+        min-width: 25px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 150px;
+        margin-top: 10px;
+    }
+
+    .date-section {
+        margin-top: 20px;
+    }
+
+    .ui-accordion-header {
+        background-color: #0f3549;
+        color: white;
+        font-size: inherit;
+        line-height: 40px;
+    }
+
+    .selectedColumns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+        min-height: 100px;
+    }
+
+    .box {
+        border: #0f3549 solid 2px;
+        background-color: white;
+        font: inherit;
+        color: #0f3549;
+        padding: 15px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        max-height: 20px;
+    }
+
+    .close-btn {
+        cursor: pointer;
+        background: #0f3549;
+        color: white;
+        border: none;
+        padding: 2px 6px;
+        border-radius: 50%;
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    .dow {
+        background-color: #0f3549;
+    }
+
+    .next, .prev {
+        color: #0f3549;
+        background-color: white;
+    }
+</style>
+        <div class="container pt-5 pb-5">
+            <div class="row">
+                <div class="selector">
+                    <div class="col-3 ">
+
+                        <div class="section">
+                            <h3>Select Tables</h3>
+                            <label class="checkboxContainer" tabindex="0">
+                                <span class="smallText"> Quote </span>
+
+                                <input type="checkbox" id="confirm-answers" name="tablecheckbox" disabled checked>
+
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkboxContainer" tabindex="1">
+                                <span class="smallText"> Quote Status </span>
+
+                                <input type="checkbox" id="hideQuoteStatus" data-target="#section2" class="toggle-section">
+
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkboxContainer" tabindex="2">
+                                <span class="smallText"> Vehicle Keeper </span>
+
+                                <input type="checkbox" id="confirm-answers" data-target="#section3" class="toggle-section">
+
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkboxContainer" tabindex="3">
+                                <span class="smallText"> Contact Detail </span>
+
+                                <input type="checkbox" id="confirm-answers" data-target="#section4" class="toggle-section">
+
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="checkboxContainer" tabindex="4">
+                                <span class="smallText"> Tax Rate </span>
+
+                                <input type="checkbox" id="confirm-answers" data-target="#section5" class="toggle-section">
+
+                                <span class="checkmark"></span>
+                            </label>
+                            <br />
+                            <!-- Date Selection -->
+                            <div>
+                                <h3>Select Date Range</h3>
+                                <div>
+                                    <span class="mb-2 font-weight-bold">
+                                        <strong class="d-block">
+                                            From
+                                        </strong>
+                                    </span>
+
+                                    <div class="bh-input-inline mt-2">
+                                        <div class="bh-input-inline">
+                                            <div id="fromdatepicker" class="input-group date">
+                                                <input class="form-control" type="text" id="from" name="DateOfBirth" onkeydown="return false" />
+                                                <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div>
+                                    <span class="mb-2 font-weight-bold">
+                                        <strong class="d-block">
+                                            To
+                                        </strong>
+                                    </span>
+
+                                    <div class="bh-input-inline mt-2">
+                                        <div class="bh-input-inline">
+                                            <div id="datepickerto" class="input-group date">
+                                                <input class="form-control" type="text" id="to" name="DateOfBirth" onkeydown="return false" />
+                                                <span class="input-group-addon"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br />
+
+                                <div>
+                                    @using (Html.BeginForm("GenerateSQL", "Reports", FormMethod.Post, new { id = "__AjaxAntiForgeryFormclientregister" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btnGradient" id="search" onclick="SearchClick()" aria-label="Search details">SEARCH</button>
+                                    }
+                                    </div>
+
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="section">
+                            <h3>Select Columns</h3>
+                            <div id="columns-list">
+                                <small>Select a table first</small>
+                                <div id="columns">
+                                    <h3>Quote</h3>
+                                    <div>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Quote ID</span>
+                                            <input type="checkbox" value="Quote ID" onchange="toggleBox(this)" disabled checked />
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">IsQuoteSP</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="IsQuoteSP">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">MyCars Flag</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="MyCarsFlag">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">SP Gross Sacrifice to Cover Costs</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="SP Gross Sac to Cover Costs">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">SP Actual Gross Sacrifice Made</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="SP Actual Gross Sac Made">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <br />
+                                    </div>
+                                    <h3 id="section2">Quote Status</h3>
+                                    <div class="content">
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Quote Status Name</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Quote Status Name">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <h3 id="section3">Vehicle Keeper</h3>
+                                    <div class="content">
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Payroll ID</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Payroll ID">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">First Name</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="First Name">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Surname</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Surname">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <h3 id="section4">Contact Detail</h3>
+                                    <div class="content">
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Email Address</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Email Address">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Post Code</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Post Code">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Mobile Number</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Mobile Telephone No">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <h3 id="section5">Tax Rate</h3>
+                                    <div class="content">
+                                        <label class="checkboxContainer">
+                                            <span class="smallText">Tax Percentage</span>
+                                            <input type="checkbox" onchange="toggleBox(this)" value="Tax Percentage">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="section">
+                            <h3>Selected Columns</h3>
+                            <div class="selectedColumns" id="boxContainer">
+                                <div class="box" id="QuoteID">Quote ID</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        $(document).ready(function () {
+
+            $(function () {
+                $('#columns').accordion();
+            });
+
+            $('.content').each(function () {
+                $(this).prev('h3').addBack().hide();
+            });
+
+
+            $('.toggle-section').click(function () {
+                var targetId = $(this).data('target');
+                var header = $(targetId);
+                var content = header.next('.content');
+                var accordion = $('#columns');
+
+                if (header.length && content.length) {
+                    if (header.is(':visible')) {
+                        accordion.accordion('option', 'active', false);
+
+                        setTimeout(function () {
+                            header.add(content).hide();
+                            content.find("input[type='checkbox']").prop('checked', false);
+                            updateContainer();
+                        }, 200);
+
+                    } else {
+                        header.add(content).show();
+                        accordion.accordion('refresh');
+                    }
+                }
+            });
+        });
+
+        function toggleBox(checkbox) {
+            updateContainer();
+        }
+
+        function updateContainer() {
+            const container = document.getElementById("boxContainer");
+
+            // Remove only dynamically added boxes (those with a close button)
+            container.querySelectorAll(".box[data-removable='true']").forEach(box => box.remove());
+
+            // Get all checked checkboxes that are NOT disabled
+            const checkedBoxes = document.querySelectorAll("input[type='checkbox']:checked:not([disabled])");
+
+            // Add boxes for checked checkboxes
+            checkedBoxes.forEach(cb => {
+                const boxValue = cb.value.trim(); // Ensure no accidental empty values
+                if (!boxValue || boxValue === "on") return; // Ignore invalid values
+
+                const boxId = "box-" + boxValue.replace(/\s+/g, '-');
+
+                // Check if the box already exists (avoid duplicates)
+                if (!document.getElementById(boxId)) {
+                    const box = document.createElement("div");
+                    box.className = "box";
+                    box.id = boxId;
+                    box.setAttribute("data-removable", "true"); // Mark as removable
+                    box.innerHTML = `${boxValue} <button class="close-btn" onclick="removeBox('${boxId}', this)">X</button>`;
+
+                    container.appendChild(box);
+                }
+            });
+        }
+
+        function removeBox(boxId, button = null) {
+            const box = document.getElementById(boxId);
+            if (box && box.getAttribute('data-removable') === 'true') {
+                box.remove();
+
+                // Uncheck the corresponding checkbox
+                const checkboxes = document.querySelectorAll("input[type='checkbox']");
+                checkboxes.forEach(cb => {
+                    if ("box-" + cb.value.replace(/\s+/g, '-') === boxId) {
+                        cb.checked = false;
+                    }
+                });
+            }
+        }
+    </script>
