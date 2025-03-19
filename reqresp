@@ -1,0 +1,16 @@
+{
+    "Tables": ["Quote", "Client", "VehicleKeeper"],
+    "Columns": ["Quote.QuoteID", "Quote.CreationDateTime", "Client.TradingName", "VehicleKeeper.FirstName"],
+    "StartTime": "2024-11-01T00:00:00",
+    "EndTime": "2024-12-01T00:00:00"
+}
+
+
+
+{
+    "GeneratedSQL": "SELECT Q.QuoteID, Q.CreationDateTime, C.TradingName, Vk.FirstName FROM [QTDDB].[dbo].Quote Q
+    INNER JOIN [QTDDB].[dbo].Client C ON Q.ClientID = C.ClientID
+    INNER JOIN [QTDDB].[dbo].VehicleKeeper Vk ON Q.VehicleKeeperID = Vk.VehicleKeeperID
+    WHERE CONVERT(datetime, Q.CreationDateTime, 105) BETWEEN '2024-11-01 00:00:00' AND '2024-12-01 00:00:00'
+    AND Q.IsQuoteSP = 1"
+}
