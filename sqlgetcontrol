@@ -1,0 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+
+namespace YourNamespace.Controllers
+{
+    [RoutePrefix("api/sqlgenerator")]
+    public class SQLGeneratorController : ApiController
+    {
+        [HttpPost]
+        [Route("generate")]
+        public IHttpActionResult GenerateSQL([FromBody] QueryRequest request)
+        {
+            if (request == null || request.Tables == null || request.Tables.Count == 0 || request.Columns == null || request.Columns.Count == 0)
+            {
+                return BadRequest("Please select at least one table and one column.");
+            }
+
+            // Define actual table-column mapping
+            Dictionary<string, string> columnMapping = new Dictionary<string, string>
+            {
+                {"Client.NOLSClientNo", "C.NOLSClientNo"},
+                {"Client.TradingName", "C.TradingName"},
+
+                {"Quote.QuoteID", "Q.QuoteID"},
+                {"Quote.CreationDateTime", "Q.CreationDateTime"},
+                {"Quote.IsQuoteSP", "Q.IsQuoteSP"},
+                {"Quote.MyCarsFlag", "Q.MyCarsFlag"},
+                {"Quote.SPGrossSactoCoverCosts", "Q.SPGrossSactoCoverCosts"},
+                {"Quote.SPActualGrossSacMade", "Q.SPActualGrossSacMade"},
+
+                {"VehicleKeeper.PayrollID", "Vk.PayrollID"},
+                {"VehicleKeeper.FirstName", "Vk.FirstName"},
+                {"VehicleKeeper.Surname", "Vk.Surname"},
+
+                {"ContactDetail.EmailAddress", "Cd.EmailAddress"},
+                {"ContactDetail.PostCode", "Cd.PostCode"},
+                {"ContactDetail.MobileTelephoneNo", "Cd.MobileTelephoneNo"},
+
+                {"TaxRate.TaxRatePercentage", "T.TaxRatePercentage"},
+
+                {"QuoteStatus.QuoteStatusName", "QS.QuoteStatusName"}
+            };
+
+            // Define table joins
+            Dictionary<string, string> tableJoins = new Dictionary<string, string>
+            {
+                {"Quote-QuoteStatus", "INNER JOIN [QTDDB].[dbo].QuoteStatus QS ON Q.QuoteStatusID = QS.QuoteStatusID"},
+                {"Quote-Client", "INNER JOIN [QTDDB].[dbo].Client C ON Q.ClientID = C.ClientID"},
+                {"Quote-VehicleKeeper", "INNER JOIN [QTDDB].[dbo].VehicleKeeper Vk ON Q.VehicleKeeperID = Vk.VehicleKeeperID"},
+                {"Quote-ContactDetail", "INNER JOIN [QTDDB].[dbo].ContactDetail Cd ON Vk.ContactDetailID = Cd.ContactDetailID"},
+                {"Quote-TaxRate", "INNER JOIN [QTDDB].[dbo].TaxRate T ON Q.TaxRateID = T.TaxRateID"}
+            };
+
+            // Validate and map selected columns
+            List<string> selectedColumns = new List<string>();
+            foreach (var column in request.Columns)
+            {
+                if (columnMapping.ContainsKey(column))
+                {
+                    selectedColumns.Add(columnMapping[column]);
+                }
+            }
+
+            if (!selectedColumns.Any())
+            {
+                return BadRequest("No valid columns selected.");
+            }
+
+            // Start SQL Query
+            string sqlQuery = "SELECT " + string.Join(", ", selectedColumns) + " FROM [QTDDB].[dbo].Quote Q";
+
+            // Add table joins dynamically
+            foreach (var table in request.Tables)
+            {
+                if (table != "Quote")
+                {
+                    string joinKey = $"Quote-{table}";
+                    if (tableJoins.ContainsKey(joinKey))
+                    {
+                        sqlQuery += "\n" + tableJoins[joinKey];
+                    }
+                }
+            }
+
+            // Add WHERE conditions for date filtering
+            string formattedStartTime = request.StartTime.HasValue ? $"'{request.StartTime.Value:yyyy-MM-dd HH:mm:ss}'" : "'2024-11-01 00:00:00'";
+            string formattedEndTime = request.EndTime.HasValue ? $"'{request.EndTime.Value:yyyy-MM-dd HH:mm:ss}'" : "'2024-12-01 00:00:00'";
+
+            sqlQuery += $"\nWHERE CONVERT(datetime, Q.CreationDateTime, 105) BETWEEN {formattedStartTime} AND {formattedEndTime}";
+            sqlQuery += "\nAND Q.IsQuoteSP = 1";
+
+            return Ok(new { GeneratedSQL = sqlQuery });
+        }
+    }
+
+    public class QueryRequest
+    {
+        public List<string> Tables { get; set; }
+        public List<string> Columns { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+    }
+}
