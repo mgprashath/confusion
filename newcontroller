@@ -2,54 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using YourNamespace.Models;
+using LP.QTO.Net.Models;
 
-namespace YourNamespace.Controllers
+namespace LP.QTO.Net.Controllers
 {
-    public class SQLGeneratorController : Controller
+    public class ReportsController : Controller
     {
         [HttpPost]
-        public ActionResult GenerateSQL(QueryRequest request)
+        public ActionResult GenerateSQL(QueryRequestViewModel model)
         {
-            if (request == null || request.Tables == null || request.Tables.Count == 0 || request.Columns == null || request.Columns.Count == 0)
+            if (model == null || model.SelectedTables == null || model.SelectedColumns == null)
             {
-                ViewBag.GeneratedSQL = "Please select at least one table and one column.";
-                return PartialView("_SQLGeneratorPartial", request);
+                TempData["SQLQuery"] = "Please select at least one table and one column.";
+                return RedirectToAction("Index");
             }
 
-            // Column Mapping
-            Dictionary<string, string> columnMapping = new Dictionary<string, string>
-            {
-                { "Client.NOLSClientNo", "C.NOLSClientNo" },
-                { "Client.TradingName", "C.TradingName" },
-                { "Quote.QuoteID", "Q.QuoteID" },
-                { "Quote.CreationDateTime", "Q.CreationDateTime" },
-                { "VehicleKeeper.FirstName", "Vk.FirstName" }
-            };
-
-            // Table Joins
+            // Define Table Joins
             Dictionary<string, string> tableJoins = new Dictionary<string, string>
             {
                 { "Quote-QuoteStatus", "INNER JOIN QuoteStatus QS ON Q.QuoteStatusID = QS.QuoteStatusID" },
                 { "Quote-Client", "INNER JOIN Client C ON Q.ClientID = C.ClientID" },
-                { "Quote-VehicleKeeper", "INNER JOIN VehicleKeeper Vk ON Q.VehicleKeeperID = Vk.VehicleKeeperID" }
+                { "Quote-VehicleKeeper", "INNER JOIN VehicleKeeper Vk ON Q.VehicleKeeperID = Vk.VehicleKeeperID" },
+                { "Quote-ContactDetail", "INNER JOIN ContactDetail Cd ON Vk.ContactDetailID = Cd.ContactDetailID" },
+                { "Quote-TaxRate", "INNER JOIN TaxRate T ON Q.TaxRateID = T.TaxRateID" }
             };
 
-            // Validate and Map Columns
-            List<string> selectedColumns = request.Columns.Where(columnMapping.ContainsKey)
-                                                         .Select(column => columnMapping[column])
-                                                         .ToList();
-
-            if (!selectedColumns.Any())
-            {
-                ViewBag.GeneratedSQL = "No valid columns selected.";
-                return PartialView("_SQLGeneratorPartial", request);
-            }
-
             // Construct SQL Query
-            string sqlQuery = "SELECT " + string.Join(", ", selectedColumns) + " FROM Quote Q";
+            string sqlQuery = "SELECT " + string.Join(", ", model.SelectedColumns) + " FROM Quote Q";
 
-            foreach (var table in request.Tables.Where(t => t != "Quote"))
+            foreach (var table in model.SelectedTables.Where(t => t != "Quote"))
             {
                 if (tableJoins.ContainsKey($"Quote-{table}"))
                 {
@@ -58,16 +39,14 @@ namespace YourNamespace.Controllers
             }
 
             // Add WHERE conditions
-            string formattedStartTime = request.StartTime.HasValue ? $"'{request.StartTime.Value:yyyy-MM-dd HH:mm:ss}'" : "'2024-11-01 00:00:00'";
-            string formattedEndTime = request.EndTime.HasValue ? $"'{request.EndTime.Value:yyyy-MM-dd HH:mm:ss}'" : "'2024-12-01 00:00:00'";
+            string formattedStartTime = model.StartTime.HasValue ? $"'{model.StartTime.Value:yyyy-MM-dd HH:mm:ss}'" : "'2024-11-01 00:00:00'";
+            string formattedEndTime = model.EndTime.HasValue ? $"'{model.EndTime.Value:yyyy-MM-dd HH:mm:ss}'" : "'2024-12-01 00:00:00'";
 
             sqlQuery += $"\nWHERE CONVERT(datetime, Q.CreationDateTime, 105) BETWEEN {formattedStartTime} AND {formattedEndTime}";
             sqlQuery += "\nAND Q.IsQuoteSP = 1";
 
-            // Send generated SQL to view
-            ViewBag.GeneratedSQL = sqlQuery;
-
-            return PartialView("_SQLGeneratorPartial", request);
+            TempData["SQLQuery"] = sqlQuery;
+            return RedirectToAction("Index");
         }
     }
 }
