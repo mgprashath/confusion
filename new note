@@ -1,0 +1,46 @@
+Sure! Let’s refine your Proposed System Design text and provide a clear point-by-point explanation of the system flow based on the diagram.
+
+⸻
+
+Updated Proposed System Design
+
+After several discussions and considering current infrastructure limitations, the initial phase of the solution will query data directly from the live transactional database.
+	•	Search functionalities will be limited to minimize performance impact on the live database.
+	•	Business consultation is required to define acceptable levels of access and filtering logic.
+
+This approach is designed to provide essential reporting capabilities while balancing system performance and security. Report files will be stored temporarily on a shared file system and made available via the SPV2 application for external users. Internal users will interact via the Q&O interface, with email alerts sent for completed reports.
+
+⸻
+
+System Diagram - Point-by-Point Explanation
+	1.	Internal User
+	•	Initiates report generation from within the Q&O Application (Quote and Order System).
+	•	Selects client, table, columns, and date filters using the interactive UI.
+	2.	Q&O Application (Software System)
+	•	Communicates with the Q and O Database to fetch required data.
+	•	Generates the requested report based on client-specific access rights and template settings.
+	•	Sends the generated report to the File System for storage.
+	•	Saves metadata (such as report details, client, template used) in the Q&O database.
+	3.	Q and O Database
+	•	Acts as the live data source for report queries.
+	•	Stores metadata about generated reports and templates.
+	•	Serves as the central system for both internal and external operations.
+	4.	File System (File Server)
+	•	Temporary storage for generated reports (CSV/XLSX).
+	•	Enables retrieval of reports by the SPV2 Application.
+	•	Shared resource using Microsoft Exchange/email-compatible infrastructure.
+	5.	SPV2 Application (Software System)
+	•	Provides report links and associated template details to External Users.
+	•	Ensures users only see and download reports for their respective clients.
+	•	Retrieves the physical files from the file server on request.
+	6.	External User
+	•	Downloads finalized reports via the SPV2 application interface.
+	•	No access to the live database, ensuring secure and filtered delivery of data.
+	7.	Email System (Software System)
+	•	Sends notifications and alerts when report generation is complete.
+	•	Powered by Microsoft Exchange (or equivalent email infrastructure).
+	•	Notifies both internal users (status updates) and external users (download availability).
+
+⸻
+
+Would you like me to generate this updated content and diagram explanation in a Word or PDF file for your report?
