@@ -1,0 +1,40 @@
+Here’s an updated Description, Key Features, Future Enhancements & AI Integration Possibilities, and Performance & Security Considerations section that reflects the new requirement while aligning with the existing format in your report:
+
+⸻
+
+Description (Updated)
+
+This enhanced module is designed to empower internal users in the Q and O systems with secure, flexible, and client-specific data extraction capabilities. It allows users to interactively generate and download data reports in CSV or XLSX formats based on selected tables, columns, and filters. A key feature is its ability to restrict data visibility strictly to the client associated with the user, ensuring no cross-client data exposure. Additionally, the screen supports saving reusable templates for frequent data extraction configurations, reducing repetitive setup and improving user efficiency. Downloadable reports are automatically made available via the SPV2 application, filtered by the client context for secure and targeted access.
+
+⸻
+
+Key Features (Updated)
+	•	Client-Specific Data Extraction: Users can generate reports that are strictly filtered to display only the data for the client they are authorized to access.
+	•	Secure Report Downloads: Download links for each client-specific report are made accessible in the SPV2 application, ensuring clear separation and security.
+	•	Interactive Query Builder: Select tables, columns, and date ranges via a user-friendly interface to generate tailored SQL queries.
+	•	Multi-Format Export: Supports report generation in both XLSX and CSV formats to meet varying client and business requirements.
+	•	Template Saving Functionality: Users can save preferred combinations of tables and columns as templates to quickly regenerate common reports without repeating configurations.
+	•	Real-Time Reporting: Data extraction and download are available instantly upon request, enabling timely insights.
+	•	Integrated User Interface: Embedded into existing Q and O systems to ensure seamless experience for internal users.
+
+⸻
+
+Future Enhancements & AI Integration Possibilities
+	•	Template Sharing & Management: Allow users to share or clone saved templates for collaboration across departments or client teams.
+	•	Usage Analytics: Track usage patterns of templates and downloads to improve system performance and user experience.
+	•	Natural Language Interface: Enable users to request data using plain language (e.g., “Show quotes for November 2024”).
+	•	Automated Anomaly Detection: Flag unusual data patterns or trends in generated reports to assist in proactive decision-making.
+	•	Predictive Reporting: Suggest relevant fields, filters, or tables based on past usage or user role.
+
+⸻
+
+Performance & Security Considerations
+	•	Strict Client Data Segregation: Enforces role-based access control to ensure users only retrieve and view data related to their assigned client.
+	•	Optimized Query Execution: Generates efficient SQL to handle large datasets without performance degradation.
+	•	Template Indexing: Uses metadata and indexing strategies to accelerate template loading and report generation.
+	•	Cloud Scalability: Supports deployment in cloud environments with auto-scaling to handle peak usage.
+	•	Audit Logging: Captures download and query activities for monitoring and compliance purposes.
+
+⸻
+
+Let me know if you’d like this added to your Word document, or exported in another format (Markdown, PDF, etc).
