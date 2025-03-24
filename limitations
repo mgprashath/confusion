@@ -1,0 +1,18 @@
+Here’s the new section titled Limitations & Concerns, written in the same professional tone to seamlessly fit into your report:
+
+⸻
+
+Limitations & Concerns
+
+In the current design, several long-term architectural solutions had to be deprioritized due to existing technical and resource limitations. As a result, the following concerns and trade-offs are noted:
+	•	No Access to Data Warehouse: Due to infrastructure constraints, integration with a dedicated data warehouse is not implemented at this stage, limiting advanced analytics and historical trend reporting.
+	•	File Server Still Required: Although reports are auto-generated, a centralized file server is still necessary to store and manage the exported CSV/XLSX files, adding dependency on existing file infrastructure.
+	•	No NoSQL/File System Server: Plans to introduce a NoSQL or alternative file system for scalable unstructured data handling have been deferred due to current environment limitations.
+	•	Live Database Usage: The module relies on the live transactional database, which introduces risks related to query performance and potential database load during high-traffic periods.
+	•	Search Functionality Constraints: Advanced search capabilities are limited by current schema and indexing, which may affect filtering performance for large datasets.
+	•	Limited Historical Data: The solution only supports up to six months of historical data per client, restricting long-term analysis or year-over-year comparisons.
+	•	Database Impact: Although queries are optimized, executing report generation directly on the live SQL database could still impose additional load, potentially impacting the performance of core applications during peak usage times.
+
+⸻
+
+Let me know if you’d like a version of the whole updated document in Word or PDF format, or if you’d like help drafting an executive summary.
