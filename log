@@ -1,0 +1,6 @@
+<%
+Set fso = Server.CreateObject("Scripting.FileSystemObject")
+Set logFile = fso.OpenTextFile(Server.MapPath("/log/debug.log"), 8, True)
+logFile.WriteLine Now & " - object_number=" & Request.Form("object_number")
+logFile.Close
+%>
