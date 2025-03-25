@@ -1,0 +1,17 @@
+case 1:
+  showSpinner();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      hideSpinner();
+      document.getElementById("left2cols").innerHTML = xmlhttp.responseText;
+    }
+  };
+
+  xmlhttp.open("POST", "/soap/get-sxml_car-val.asp", true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+  let params = "object_number=" + encodeURIComponent(document.forms[0].objno.value)
+             + "&registration_number=" + encodeURIComponent(document.forms[0].regno.value);
+
+  xmlhttp.send(params);
+  break;
