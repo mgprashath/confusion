@@ -1,21 +1,27 @@
 <%
+On Error Resume Next
+
 Dim fso, logFile, logPath, logMessage
 
-logPath = Server.MapPath("/logs/debug.log") ' Make sure /logs folder exists and is writable
+logPath = Server.MapPath("/log/debug.log")
 
 Set fso = Server.CreateObject("Scripting.FileSystemObject")
 
 If Not fso.FileExists(logPath) Then
     Set logFile = fso.CreateTextFile(logPath, True)
 Else
-    Set logFile = fso.OpenTextFile(logPath, 8, True) ' 8 = ForAppending
+    Set logFile = fso.OpenTextFile(logPath, 8, True)
 End If
 
 logMessage = Now & " | object_number=" & Request.Form("object_number") & " | registration_number=" & Request.Form("registration_number")
-
 logFile.WriteLine logMessage
 logFile.Close
 
 Set logFile = Nothing
 Set fso = Nothing
+
+If Err.Number <> 0 Then
+  Response.Write "<b>LOGGING ERROR:</b> " & Err.Description
+  Response.End
+End If
 %>
