@@ -1,0 +1,103 @@
+Great — you’re working with an old app that uses PDFObject, and the version is from around 2008. That’s PDFObject v1.x, which is very outdated, lacks proper browser support, and has limitations.
+
+⸻
+
+✅ Your Goal: Upgrade PDF embedding in your app (Classic ASP + JavaScript frontend)
+
+Let’s walk through the upgrade path:
+
+⸻
+
+✅ Step 1: Use the Latest PDFObject (v2.2.8)
+
+PDFObject v2.2.8 is the latest stable version. It supports:
+	•	All modern browsers (Chrome, Edge, Firefox)
+	•	Graceful fallback when no native PDF support is available
+	•	Simpler embedding syntax
+
+Official site:
+
+https://pdfobject.com
+
+Download from:
+
+https://github.com/pipwerks/PDFObject
+
+⸻
+
+✅ Step 2: Replace Old Script Include
+
+In your old app you might see something like:
+
+<script type="text/javascript" src="pdfobject.js"></script>
+
+Replace it with the latest version:
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.8/pdfobject.min.js"></script>
+
+Or download the latest pdfobject.min.js and include it locally.
+
+⸻
+
+✅ Step 3: Replace Old Embedding Code
+
+Old version likely uses:
+
+PDFObject.embed("myfile.pdf", "pdfContainer");
+
+That syntax is still supported in v2.2.8, but now you can add extra options like height, fallback, etc.
+
+Modern example:
+
+<div id="pdfContainer"></div>
+
+<script>
+    PDFObject.embed("myfile.pdf", "#pdfContainer", {
+        height: "600px"
+    });
+</script>
+
+
+
+⸻
+
+✅ Step 4: Handle Fallback for Unsupported Browsers
+
+The new version gives better fallback support. You can write:
+
+<noscript>
+    <p>This document requires JavaScript and a browser with PDF support.</p>
+</noscript>
+
+Or let the library handle it via CSS.
+
+⸻
+
+✅ Step 5: (Optional) Make it Dynamic
+
+If your Classic ASP app is dynamically generating PDF links:
+
+<%
+pdfUrl = "pdfs/" & Request.QueryString("doc") & ".pdf"
+%>
+<script>
+    PDFObject.embed("<%=pdfUrl%>", "#pdfContainer", { height: "600px" });
+</script>
+
+Just make sure the PDF file exists and is accessible.
+
+⸻
+
+✅ Summary
+
+Task	Done with
+Upgrade script	pdfobject.min.js v2.2.8
+Drop-in replacement	PDFObject.embed(...)
+More options/fallback	Supported in v2.2.8
+Compatible with Classic ASP	✅ Yes (just update the frontend)
+
+
+
+⸻
+
+Let me know if you want help writing a dynamic viewer page, fallback to download, or even switching to <iframe> or <embed> for more control.
