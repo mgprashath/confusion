@@ -1,0 +1,116 @@
+Thanks for the clear image — you’re dealing with a report listing several HTTP security headers that are missing in your application (likely Classic ASP + IIS-based). Let me break down how to mitigate each issue in a practical and minimal-impact way:
+
+⸻
+
+1. Missing X-Frame-Options (Clickjacking Protection)
+
+Header to Add:
+
+X-Frame-Options: DENY
+
+How to Add in IIS:
+	•	Open IIS Manager
+	•	Select your website
+	•	Go to HTTP Response Headers
+	•	Click Add:
+	•	Name: X-Frame-Options
+	•	Value: DENY
+
+⸻
+
+2. Missing HTTP Strict Transport Security (HSTS)
+
+Header to Add (only if you’re using HTTPS):
+
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+Add in IIS (if HTTPS is used):
+	•	Same steps as above
+	•	Name: Strict-Transport-Security
+	•	Value: max-age=31536000; includeSubDomains; preload
+
+Caution: Only enable HSTS if the site is fully HTTPS — this will force all future requests to use HTTPS.
+
+⸻
+
+3. Missing Content-Security-Policy (CSP)
+
+Header Example (basic safe version):
+
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self';
+
+This tells the browser to only allow scripts/styles from the same origin.
+
+To Add in IIS:
+	•	Name: Content-Security-Policy
+	•	Value: default-src 'self'; script-src 'self'; style-src 'self';
+
+Note: This can break functionality if your app loads scripts/styles from other domains. Test carefully.
+
+⸻
+
+4. Missing Referrer-Policy
+
+Header to Add:
+
+Referrer-Policy: no-referrer
+
+Other safe values: strict-origin-when-cross-origin
+
+Add in IIS:
+	•	Name: Referrer-Policy
+	•	Value: no-referrer
+
+⸻
+
+5. Missing X-Content-Type-Options
+
+Header to Add:
+
+X-Content-Type-Options: nosniff
+
+Prevents browsers from guessing the content type and potentially executing malicious scripts.
+
+IIS Steps:
+	•	Name: X-Content-Type-Options
+	•	Value: nosniff
+
+⸻
+
+6. Sensitive Info Stored in Cache (Recommendation)
+
+To prevent caching of sensitive pages:
+
+Header to Add:
+
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Expires: 0
+
+Add via Classic ASP (if needed):
+
+<%
+Response.Expires = -1
+Response.AddHeader "Pragma", "no-cache"
+Response.AddHeader "Cache-Control", "no-store, no-cache, must-revalidate"
+%>
+
+Or add via IIS HTTP headers like others.
+
+⸻
+
+✅ Summary Table:
+
+Vulnerability	Header	Example Value
+Clickjacking	X-Frame-Options	DENY
+HTTPS Enforcement	Strict-Transport-Security	max-age=31536000; includeSubDomains
+CSP (XSS Protection)	Content-Security-Policy	default-src 'self'
+Referrer leak	Referrer-Policy	no-referrer
+MIME sniffing	X-Content-Type-Options	nosniff
+Caching	Cache-Control, Pragma	no-store, no-cache
+
+
+
+⸻
+
+Let me know if you’d prefer to apply all these headers in web.config, via Classic ASP response code, or a reverse proxy like nginx — I can give exact code for your setup.
