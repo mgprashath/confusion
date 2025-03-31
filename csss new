@@ -1,0 +1,16 @@
+<style>
+  .sub_nav li a:link {
+    color: blue;
+    text-decoration: underline;
+  }
+
+  .sub_nav li a:visited {
+    color: purple;
+  }
+
+  .sub_nav li.inactive a {
+    color: gray;
+    pointer-events: none;
+    text-decoration: none;
+  }
+</style>
