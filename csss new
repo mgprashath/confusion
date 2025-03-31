@@ -1,16 +1,18 @@
-<style>
-  .sub_nav li a:link {
-    color: blue;
-    text-decoration: underline;
-  }
+.sub_nav a.active {
+  display: block;
+  background-color: #003366;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  text-decoration: none;
+}
 
-  .sub_nav li a:visited {
-    color: purple;
-  }
-
-  .sub_nav li.inactive a {
-    color: gray;
-    pointer-events: none;
-    text-decoration: none;
-  }
-</style>
+.sub_nav a.inactive {
+  display: block;
+  background-color: #e0e0e0;
+  color: #999;
+  pointer-events: none;
+  cursor: default;
+  padding: 10px;
+  text-decoration: none;
+}
