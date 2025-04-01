@@ -1,0 +1,51 @@
+Here’s a short and relevant introduction you can use for your slide:
+
+⸻
+
+“This presentation highlights the key security improvements made after our recent penetration testing assessment. We’ll walk through the major vulnerabilities identified and the steps taken to secure the application and infrastructure.”
+
+⸻
+
+Let me know if you want to make it more formal or more technical.
+
+
+
+
+
+Sure! Here’s a slightly longer version that’s still concise and relevant:
+
+⸻
+
+“Following the recent penetration testing exercise, our team focused on addressing and remediating the identified vulnerabilities to strengthen the application’s security posture. In this presentation, we’ll provide an overview of the key issues found, the mitigation steps taken, and how these changes help ensure compliance and improve overall system resilience.”
+
+⸻
+
+Let me know if you want to tailor it to a specific audience (e.g., technical team, management, auditors).
+
+
+
+
+Here’s a concise and professional introduction you can use for your presentation:
+
+⸻
+
+Introduction Slide Text (or Script):
+
+Title: “Pen Test Remediation Summary”
+Subtitle (optional): Securing a Legacy Web Application in Response to a Security Assessment
+
+⸻
+
+Introduction:
+
+This presentation outlines the key vulnerabilities identified during a recent penetration test of our legacy web application and the corresponding remediation actions taken.
+
+The application, built on Classic ASP and hosted on IIS, had several security gaps common in older systems — including missing security headers, unsafe cookie settings, lack of CSP enforcement, and exposure to client-side risks.
+
+The goal of this remediation was to address each finding without breaking existing functionality, while aligning with modern web security best practices.
+
+In the following slides, you’ll see a breakdown of each vulnerability, the associated risk, and the applied fix — covering both server-level (IIS) and application-level changes.
+
+⸻
+
+Let me know if you want this tailored for a specific audience — like technical peers, management, or auditors.
