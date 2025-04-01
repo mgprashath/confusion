@@ -1,0 +1,9 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const validateBtn = document.getElementById("validateBtn");
+  if (validateBtn) {
+    validateBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      loadDoc(1);
+    });
+  }
+});
