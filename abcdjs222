@@ -1,0 +1,58 @@
+function showSpinner() {
+  document.getElementById('spinWrap').style.visibility = 'visible';
+}
+
+function hideSpinner() {
+  document.getElementById('spinWrap').style.visibility = 'hidden';
+}
+
+function postData(url, params, callback) {
+  var xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  xmlhttp.onreadystatechange = function () {
+    if (xmlhttp.readyState === 4) {
+      callback(xmlhttp.status, xmlhttp.responseText);
+    }
+  };
+  xmlhttp.open("POST", url, true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.send(params);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('validateForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    showSpinner();
+    const objno = encodeURIComponent(document.getElementById('objno').value);
+    const regno = encodeURIComponent(document.getElementById('regno').value);
+    const params = "object_number=" + objno + "&registration_number=" + regno;
+
+    postData('/soap/get-sxml_car-val.asp', params, function (status, response) {
+      hideSpinner();
+      const target = document.getElementById('left2cols');
+      if (status === 200) {
+        target.innerHTML = response;
+      } else {
+        target.innerHTML = `
+          <div class="col_1of4 col_left">
+            <div class="clientlogo">
+              <img src="/images/screen-clean.jpg" width="192" height="128" alt="screen clean">
+            </div>
+            <h2>Progress</h2>
+            <ul class="sub_nav">
+              <li><a href="/" title="step 1 - validate vehicle" class="step-active">Step 1 - Validate Vehicle</a></li>
+              <li><a href="#" title="step 2 - select document" class="inactive">Step 2 - Select Document</a></li>
+              <li><a href="#" title="view document" class="inactive">Step 3 - View Document</a></li>
+            </ul>
+          </div>
+          <div style="float: left;height:400px; width: 1px;"></div>
+          <div id="centrecol">
+            <div class="col_2of4" id="tdiv" name="tdiv">
+              <h1>Sorry there has been an Error</h1>
+              <p><strong>Please refer to the information on the right-hand side for further assistance.</strong></p>
+            </div>
+          </div>`;
+      }
+    });
+  });
+});
