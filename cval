@@ -1,0 +1,198 @@
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="1252"%>
+<!--#include virtual="/includes/vars.asp" -->
+<%
+' validate request
+Dim approve
+approve = "N"
+' regular expression for reg number
+Dim RegNoRegEx
+Set RegNoRegEx = New RegExp
+RegNoRegEx.Global = true
+RegNoRegEx.Pattern = "[^0-9a-zA-Z]" ' allow only these characters
+
+Dim ObjNum, regNum
+If Not IsEmpty(Request.Form("object_number")) Then
+    ObjNum = Request.Form("object_number")
+    regNum = Request.Form("registration_number")
+    Session("objectNumber") = Request.Form("object_number")
+    Session("registrationNumber") = Request.Form("registration_number")
+End If
+ObjNum = Session("objectNumber")
+regNum = Session("registrationNumber")
+
+' validate registration number
+Function IsRegNoValid(strRegNo)
+  Dim blnIsItValid
+  blnIsItValid = True
+  If Len(strRegNo) > 7 Then blnIsItValid = False
+  If RegNoRegEx.Replace(strRegNo, "") <> strRegNo Then blnIsItValid = False
+  IsRegNoValid = blnIsItValid
+End Function
+
+Dim bErrorState
+bErrorState = False
+
+If (isNumeric(ObjNum) = False) OR Len(ObjNum) > 7 Then bErrorState = True
+If IsRegNoValid(regNum) = False Then bErrorState = True
+
+Dim iMenuLevel
+If bErrorState Then
+  iMenuLevel = 1
+Else
+  iMenuLevel = 2
+End If
+%>
+<!--#include virtual="/includes/vars.asp" -->
+<!--#include virtual="/includes/left-nav.asp" --><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<HEAD>
+</HEAD>
+<%
+' Add leading zero to day or month if required
+Function LeadingZero(dateNo)
+  If dateNo < 10 Then
+    dateNo = "0" & dateNo
+  End If
+  LeadingZero = dateNo
+End Function
+
+' get valid date without time
+Function CurrentDate(dtValue)
+  ISOtoDbDate = Year(dtValue) & "-" & LeadingZero(Month(dtValue)) & "-" & LeadingZero(Day(dtValue))
+End Function
+
+' return formatted time, thus 14.34.27
+Function CurrentTime(dtValue)
+  CurrentTime = LeadingZero(Hour(dtValue)) & "." & LeadingZero(Minute(dtValue)) & "." & LeadingZero(Second(dtValue))
+End Function
+
+If bErrorState = False Then
+
+  private function xmlsend(url, docSubmit)
+    Set poster = Server.CreateObject("MSXML2.ServerXMLHTTP")
+    poster.open "POST", url, false
+    poster.setRequestHeader "CONTENT_TYPE", "text/xml"
+    poster.send docSubmit
+    Set NewDoc = server.createobject("Microsoft.XMLDOM")
+    newDoc.ValidateOnParse= True
+    newDoc.LoadXML(poster.responseTEXT)
+
+    Set XMLSend = NewDoc
+    Set poster = Nothing
+  end function
+
+  xmlString = "<?xml version=""1.0"" encoding=""UTF-8""?>" & VBCRLF _
+  & "<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/""" & VBCRLF _
+  & "xmlns:esb=""http://www.leaseplan.com/xsd/esb/ESBCommonTypes"">" & VBCRLF _
+  & "<soapenv:Header />" & VBCRLF _
+  & "<soapenv:Body>" & VBCRLF _
+  & "<mlp:car_validation_request " & VBCRLF _
+  & "xmlns:esb=""http://www.leaseplan.com/xsd/esb/ESBCommonTypes"" " & VBCRLF _
+  & "xmlns:mlp=""http://www.leaseplan.com/xsd/esb/lpgb/MyLP_NOLS"" " & VBCRLF _
+  & "xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" " & VBCRLF _
+  & "xsi:schemaLocation=""http://www.leaseplan.com/xsd/esb/lpgb/MyLP_NOLS ../../../../../xsd/esb/lpgb/MyLP_NOLS.xsd "">" & VBCRLF _
+  & "<esb:header>" & VBCRLF _
+  & "<esb:message_type>car_validation_request</esb:message_type>" & VBCRLF _
+  & "<esb:version>01.80</esb:version>" & VBCRLF _
+  & "<esb:source_entity>LPGB</esb:source_entity>" & VBCRLF _
+  & "<esb:source_application>MY</esb:source_application>" & VBCRLF _
+  & "<esb:destination_entity>LPGB</esb:destination_entity>" & VBCRLF _
+  & "<esb:destination_application>NOLS</esb:destination_application>" & VBCRLF _
+  & "</esb:header>" & VBCRLF _
+  & "<mlp:body>" & VBCRLF _
+  & "<mlp:car_identification>" & VBCRLF _
+  & "<mlp:object_number>" & Request("object_number") & "</mlp:object_number>" & VBCRLF _
+  & "<mlp:registration_number>" & UCase(Replace(Request("registration_number"), " ", "")) & "</mlp:registration_number>" & VBCRLF _
+  & "</mlp:car_identification>" & VBCRLF _
+  & "</mlp:body>" & VBCRLF _
+  & "</mlp:car_validation_request>" & VBCRLF _
+  & "</soapenv:Body>" & VBCRLF _
+  & "</soapenv:Envelope>"
+
+  'xmlString = "<Send><UserName>Colt</UserName><PassWord>Taylor</PassWord><Data>100</Data></Send>"
+
+  'Load the XML into an XMLDOM object
+  Set SendDoc = server.createobject("Microsoft.XMLDOM")
+  SendDoc.ValidateOnParse= True
+  SendDoc.LoadXML(xmlString)
+
+  'Call the XML Send function (defined below)
+  set NewDoc = xmlSend (sURL, SendDoc)'xmlString)
+  'We receive back another XML DOM object!
+
+  ' Tell the user what happened
+  'response.Write "<b>SXML DOC posted off:</b><br>"
+
+  inputXML = SendDoc.Xml
+  inputXML = Replace(inputXML, "<", "&lt;")
+  inputXML = Replace(inputXML, ">", "&gt;")
+  inputXML = Replace(inputXML, VBCRLF, "<br />")
+  'Response.write "<pre>" & inputXML & "</pre>"
+
+  'Response.write "<b>Target URL:</b> " & sURL & "<br><br>"
+
+  'Response.write "<b>SXML DOC Received back: </b><br>"
+
+  outputXML = NewDoc.Xml
+  outputXML = Replace(outputXML, "<", "&lt;")
+  outputXML = Replace(outputXML, ">", "&gt;")
+  outputXML = Replace(outputXML, VBCRLF, "<br />")
+  'Response.write "<pre>" & outputXML & "</pre><br>"
+
+  Dim xmlDoc
+  Dim objNo, regNo
+  set xmlDoc=Server.CreateObject("MSXML2.DOMDocument.3.0")
+  xmlDoc.async="false"
+  xmlDoc.load(NewDoc)
+
+  Dim oNode       
+  For Each oNode In xmlDoc.documentElement.selectNodes("/soapenv:Envelope/soapenv:Body/mlp:car_validation_response")
+    objNo = oNode.selectSingleNode("mlp:body/mlp:car_identification/mlp:object_number").text   
+    regNo = oNode.selectSingleNode("mlp:body/mlp:car_identification/mlp:registration_number").text
+    approve = oNode.selectSingleNode("mlp:body/mlp:valid_flag").text
+  Next
+
+  'Response.write "<b>Extracted from SOAP response: </b><br>"
+  'Response.write "objNo: " & objNo & "<br>"
+  'Response.write "regNo: " & regNo & "<br>"
+  'Response.write "valid request?: " & approve & "<br><br>"
+End If
+
+If approve = "Y" Then
+  Server.Transfer "/soap/get-sxml_doc-req.asp"
+Else
+  Dim responseStr
+  
+  responseStr = DRLeftNav
+  responseStr = responseStr & "<div style=""float: left;height:400px; width: 1px;""></div>" & VBCRLF _
+  & "<div id=""centrecol"">" & VBCRLF _
+  & "<div class=""col_2of4"" id=""tdiv"" name=""tdiv"">" & VBCRLF _
+  & "<h1>Sorry the vehicle validation has failed</h1>" & VBCRLF _
+  & "<p><strong>May we please ask you to check the registration and reference numbers are correct and try again.</strong></p>" & VBCRLF _
+  & "<p><strong>Note 1:</strong> Please use upper case on the registration number, without spaces.<br>" & VBCRLF _
+  & "<strong>Note 2:</strong> Your reference number, which can be found on either the Unfair Wear and Tear Advice Note or associated Invoice, should also be entered without spaces.</p>" & VBCRLF _
+  & "<form>" & VBCRLF _
+  & "<input type=""hidden"" name=""pfm"" value=""1"">" & VBCRLF _
+  & "<fieldset class=""contact_form"">" & VBCRLF _
+  & "<label for=""regno"">Registration Number<span></span></label><div class=""required""><span>*</span></div>" & VBCRLF _
+  & "<input type=""text"" id=""regno"" name=""regno"" value="""" class=""error"">" & VBCRLF _
+  & "<br>" & VBCRLF _
+  & "<label for=""objno"">Reference Number<span></span></label><div class=""required""><span>*</span></div>" & VBCRLF _
+  & "<input type=""text"" id=""objno"" name=""objno"" value="""" class=""error"">" & VBCRLF _
+  & "<br>" & VBCRLF _
+  & "<br>" & VBCRLF _
+  & "<a href=""javascript: loadDoc(1);"" class=""button button_large"">" & VBCRLF _
+  & "<span class=""button_left"">&#160;</span>" & VBCRLF _
+  & "<span class=""button_center"">Validate Vehicle</span>" & VBCRLF _
+  & "<span class=""button_right"">&#160;</span>" & VBCRLF _
+  & "</a>" & VBCRLF _
+  & "<p>(* = required)</p>" & VBCRLF _
+  & "</fieldset>" & VBCRLF _
+  & "</form>" & VBCRLF _
+  & "</div>"
+  
+  Response.write responseStr
+End If
+%>
+</HTML>
