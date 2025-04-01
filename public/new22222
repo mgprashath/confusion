@@ -1,0 +1,145 @@
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="1252"%>
+<!--#include virtual="/includes/vars.asp" -->
+<%
+' validate request
+Dim approve
+approve = "N"
+
+Dim RegNoRegEx
+Set RegNoRegEx = New RegExp
+RegNoRegEx.Global = true
+RegNoRegEx.Pattern = "[^0-9a-zA-Z]"
+
+Dim ObjNum, regNum
+If Not IsEmpty(Request.Form("object_number")) Then
+    ObjNum = Request.Form("object_number")
+    regNum = Request.Form("registration_number")
+    Session("objectNumber") = ObjNum
+    Session("registrationNumber") = regNum
+End If
+ObjNum = Session("objectNumber")
+regNum = Session("registrationNumber")
+
+Function IsRegNoValid(strRegNo)
+  Dim blnIsItValid
+  blnIsItValid = True
+  If Len(strRegNo) > 7 Then blnIsItValid = False
+  If RegNoRegEx.Replace(strRegNo, "") <> strRegNo Then blnIsItValid = False
+  IsRegNoValid = blnIsItValid
+End Function
+
+Dim bErrorState
+bErrorState = False
+If (Not isNumeric(ObjNum)) OR Len(ObjNum) > 7 Then bErrorState = True
+If IsRegNoValid(regNum) = False Then bErrorState = True
+
+Dim iMenuLevel
+If bErrorState Then
+  iMenuLevel = 1
+Else
+  iMenuLevel = 2
+End If
+%>
+
+<!--#include virtual="/includes/vars.asp" -->
+<!--#include virtual="/includes/left-nav.asp" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Validation Page</title>
+  <link href="/css/default.css" rel="stylesheet" />
+  <script src="/scripts/validation.js" defer></script>
+</head>
+<body>
+<%
+' Date format functions
+Function LeadingZero(dateNo)
+  If dateNo < 10 Then dateNo = "0" & dateNo
+  LeadingZero = dateNo
+End Function
+
+Function CurrentDate(dtValue)
+  CurrentDate = Year(dtValue) & "-" & LeadingZero(Month(dtValue)) & "-" & LeadingZero(Day(dtValue))
+End Function
+
+Function CurrentTime(dtValue)
+  CurrentTime = LeadingZero(Hour(dtValue)) & "." & LeadingZero(Minute(dtValue)) & "." & LeadingZero(Second(dtValue))
+End Function
+
+If bErrorState = False Then
+  private function xmlsend(url, docSubmit)
+    Set poster = Server.CreateObject("MSXML2.ServerXMLHTTP")
+    poster.open "POST", url, false
+    poster.setRequestHeader "CONTENT_TYPE", "text/xml"
+    poster.send docSubmit
+    Set NewDoc = server.createobject("Microsoft.XMLDOM")
+    newDoc.ValidateOnParse= True
+    newDoc.LoadXML(poster.responseTEXT)
+    Set xmlsend = NewDoc
+    Set poster = Nothing
+  end function
+
+  xmlString = "<?xml version=""1.0"" encoding=""UTF-8""?>" & VBCRLF & _
+  "<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"">" & VBCRLF & _
+  "<soapenv:Header />" & VBCRLF & _
+  "<soapenv:Body>" & VBCRLF & _
+  "<mlp:car_validation_request xmlns:esb=""http://www.leaseplan.com/xsd/esb/ESBCommonTypes"" xmlns:mlp=""http://www.leaseplan.com/xsd/esb/lpgb/MyLP_NOLS"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">" & VBCRLF & _
+  "<esb:header>" & VBCRLF & _
+  "<esb:message_type>car_validation_request</esb:message_type>" & VBCRLF & _
+  "<esb:version>01.80</esb:version>" & VBCRLF & _
+  "<esb:source_entity>LPGB</esb:source_entity>" & VBCRLF & _
+  "<esb:source_application>MY</esb:source_application>" & VBCRLF & _
+  "<esb:destination_entity>LPGB</esb:destination_entity>" & VBCRLF & _
+  "<esb:destination_application>NOLS</esb:destination_application>" & VBCRLF & _
+  "</esb:header>" & VBCRLF & _
+  "<mlp:body><mlp:car_identification>" & VBCRLF & _
+  "<mlp:object_number>" & ObjNum & "</mlp:object_number>" & VBCRLF & _
+  "<mlp:registration_number>" & UCase(Replace(regNum, " ", "")) & "</mlp:registration_number>" & VBCRLF & _
+  "</mlp:car_identification></mlp:body>" & VBCRLF & _
+  "</mlp:car_validation_request></soapenv:Body></soapenv:Envelope>"
+
+  Set SendDoc = server.createobject("Microsoft.XMLDOM")
+  SendDoc.ValidateOnParse = True
+  SendDoc.LoadXML(xmlString)
+
+  set NewDoc = xmlSend(sURL, SendDoc)
+
+  Dim xmlDoc
+  set xmlDoc = Server.CreateObject("MSXML2.DOMDocument.3.0")
+  xmlDoc.async = "false"
+  xmlDoc.load(NewDoc)
+
+  Dim oNode
+  For Each oNode In xmlDoc.documentElement.selectNodes("/soapenv:Envelope/soapenv:Body/mlp:car_validation_response")
+    objNo = oNode.selectSingleNode("mlp:body/mlp:car_identification/mlp:object_number").text
+    regNo = oNode.selectSingleNode("mlp:body/mlp:car_identification/mlp:registration_number").text
+    approve = oNode.selectSingleNode("mlp:body/mlp:valid_flag").text
+  Next
+End If
+
+If approve = "Y" Then
+  Server.Transfer "/soap/get-sxml_doc-req.asp"
+Else
+  Dim responseStr
+  responseStr = DRLeftNav
+  responseStr = responseStr & "<div style=""float: left;height:400px; width: 1px;""></div>" & VBCRLF & _
+    "<div id=""centrecol"">" & VBCRLF & _
+    "<div class=""col_2of4"" id=""tdiv"" name=""tdiv"">" & VBCRLF & _
+    "<h1>Sorry the vehicle validation has failed</h1>" & VBCRLF & _
+    "<p><strong>Please check the registration and reference numbers and try again.</strong></p>" & VBCRLF & _
+    "<form id=""validationForm"">" & VBCRLF & _
+    "<fieldset class=""contact_form"">" & VBCRLF & _
+    "<label for=""regno"">Registration Number</label>" & VBCRLF & _
+    "<input type=""text"" id=""regno"" name=""regno"" value="""" class=""error""><br>" & VBCRLF & _
+    "<label for=""objno"">Reference Number</label>" & VBCRLF & _
+    "<input type=""text"" id=""objno"" name=""objno"" value="""" class=""error""><br><br>" & VBCRLF & _
+    "<a href=""#"" id=""validateBtn"" class=""button button_large"">" & VBCRLF & _
+    "<span class=""button_left"">&#160;</span><span class=""button_center"">Validate Vehicle</span><span class=""button_right"">&#160;</span>" & VBCRLF & _
+    "</a><p>(* = required)</p></fieldset></form></div></div>"
+
+  Response.Write responseStr
+End If
+%>
+</body>
+</html>
