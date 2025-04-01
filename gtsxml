@@ -1,0 +1,259 @@
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="1252"%>
+<!--#include virtual="/includes/vars.asp" -->
+<%
+' validate request
+Dim approve
+approve = "N"
+' regular expression for reg number
+Dim RegNoRegEx
+Set RegNoRegEx = New RegExp
+RegNoRegEx.Global = true
+RegNoRegEx.Pattern = "[^0-9a-zA-Z]" ' allow only these characters
+Dim ObjNum, regNum
+ObjNum = Session("objectNumber")
+regNum = Session("registrationNumber")
+
+' validate registration number
+Function IsRegNoValid(strRegNo)
+  Dim blnIsItValid
+  blnIsItValid = True
+  If Len(strRegNo) > 7 Then blnIsItValid = False
+  If RegNoRegEx.Replace(strRegNo, "") <> strRegNo Then blnIsItValid = False
+  IsRegNoValid = blnIsItValid
+End Function
+
+Dim bErrorState
+bErrorState = False
+
+If (isNumeric(ObjNum) = False) Then bErrorState = True
+If IsRegNoValid(regNum) = False Then bErrorState = True
+
+If bErrorState Then Response.redirect "/soap/get-sxml_car-val.asp"
+
+Dim iMenuLevel : iMenuLevel = 2
+%>
+<!--#include virtual="/includes/left-nav.asp" --><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<HEAD>
+</HEAD>
+<%
+' Add leading zero to day or month if required
+Function LeadingZero(dateNo)
+  If dateNo < 10 Then
+    dateNo = "0" & dateNo
+  End If
+  LeadingZero = dateNo
+End Function
+
+' get valid date without time
+Function CurrentDate(dtValue)
+  ISOtoDbDate = Year(dtValue) & "-" & LeadingZero(Month(dtValue)) & "-" & LeadingZero(Day(dtValue))
+End Function
+
+' return formatted time, thus 14.34.27
+Function CurrentTime(dtValue)
+  CurrentTime = LeadingZero(Hour(dtValue)) & "." & LeadingZero(Minute(dtValue)) & "." & LeadingZero(Second(dtValue))
+End Function
+
+private function xmlsend(url, docSubmit)
+  Set poster = Server.CreateObject("MSXML2.ServerXMLHTTP")
+  poster.open "POST", url, false
+  poster.setRequestHeader "CONTENT_TYPE", "text/xml"
+  poster.send docSubmit
+  Set NewDoc = server.createobject("Microsoft.XMLDOM")
+  newDoc.ValidateOnParse= True
+  newDoc.LoadXML(poster.responseTEXT)
+
+  Set XMLSend = NewDoc
+  Set poster = Nothing
+end function
+
+xmlString = "<?xml version=""1.0"" encoding=""UTF-8""?>" & VBCRLF _
+& "<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/""" & VBCRLF _
+& "xmlns:esb=""http://www.leaseplan.com/xsd/esb/ESBCommonTypes"">" & VBCRLF _
+& "<soapenv:Header />" & VBCRLF _
+& "<soapenv:Body>" & VBCRLF _
+& "<mlp:document_location_request" & VBCRLF _
+& "xmlns:esb=""http://www.leaseplan.com/xsd/esb/ESBCommonTypes""" & VBCRLF _
+& "xmlns:mlp=""http://www.leaseplan.com/xsd/esb/lpgb/MyLP_NOLS""" & VBCRLF _
+& "xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""" & VBCRLF _
+& "xsi:schemaLocation=""http://www.leaseplan.com/xsd/esb/lpgb/MyLP_NOLS ../../../../../xsd/esb/lpgb/MyLP_NOLS.xsd "">" & VBCRLF _
+& "<esb:header>" & VBCRLF _
+& "<esb:message_type>document_location_request</esb:message_type>" & VBCRLF _
+& "<esb:version>01.80</esb:version>" & VBCRLF _
+& "<esb:source_entity>LPGB</esb:source_entity>" & VBCRLF _
+& "<esb:source_application>MY</esb:source_application>" & VBCRLF _
+& "<esb:destination_entity>LPGB</esb:destination_entity>" & VBCRLF _
+& "<esb:destination_application>NOLS</esb:destination_application>" & VBCRLF _
+& "</esb:header>" & VBCRLF _
+& "<mlp:body>" & VBCRLF _
+& "<mlp:car_identification>" & VBCRLF _
+& "<mlp:object_number>" & Request("object_number") & "</mlp:object_number>" & VBCRLF _
+& "<mlp:registration_number>" & Request("registration_number") & "</mlp:registration_number>" & VBCRLF _
+& "</mlp:car_identification>" & VBCRLF _
+& "</mlp:body>" & VBCRLF _
+& "</mlp:document_location_request>" & VBCRLF _
+& "</soapenv:Body>" & VBCRLF _
+& "</soapenv:Envelope>"
+
+'Load the XML into an XMLDOM object
+Set SendDoc = server.createobject("Microsoft.XMLDOM")
+SendDoc.ValidateOnParse= True
+SendDoc.LoadXML(xmlString)
+
+'Call the XML Send function (defined below)
+set NewDoc = xmlSend (sURL, SendDoc)'xmlString)
+'We receive back another XML DOM object!
+
+'Tell the user what happened
+'response.Write "<b>SXML DOC posted off:</b><br>"
+'response.write SendDoc.XML & "<br>" & "<br>"
+
+inputXML = SendDoc.Xml
+inputXML = Replace(inputXML, "<", "&lt;")
+inputXML = Replace(inputXML, ">", "&gt;")
+inputXML = Replace(inputXML, VBCRLF, "<br />")
+'Response.write "<pre>" & inputXML & "</pre>"
+
+'Response.write "<b>Target URL:</b> " & sURL & "<br><br>"
+'Response.write "<b>SXML DOC Received back: </b><br>"
+
+outputXML = NewDoc.Xml
+outputXML = Replace(outputXML, "<", "&lt;")
+outputXML = Replace(outputXML, ">", "&gt;")
+outputXML = Replace(outputXML, VBCRLF, "<br />")
+'Response.write "<pre>" & outputXML & "</pre><br>"
+
+Dim xmlDoc
+Dim objNo, regNo, docIDsArray(3) 
+set xmlDoc=Server.CreateObject("MSXML2.DOMDocument.3.0")
+xmlDoc.async="false"
+xmlDoc.load(NewDoc)
+
+objNo = xmlDoc.selectSingleNode("//mlp:object_number").text
+regNo = xmlDoc.selectSingleNode("//mlp:registration_number").text
+
+'Response.write "<b>Extracted from SOAP response: </b><br>"
+'Response.write "objNo: " & objNo & "<br>"
+'Response.write "regNo: " & regNo & "<br>"
+
+Dim sSGSURL
+
+' define array
+Dim docsArray(), iCount, iDocCount
+' get number of document records for array
+Set objNodes = xmlDoc.SelectNodes("soapenv:Envelope/soapenv:Body/mlp:document_location_response/mlp:body/mlp:documents/mlp:document_location")
+' set size of array
+iCount = 0
+ReDim docsArray(2, objNodes.Length - 1)
+
+iCount = 0
+iDocCount = 0
+For Each oNode In xmlDoc.SelectNodes("soapenv:Envelope/soapenv:Body/mlp:document_location_response/mlp:body/mlp:documents/mlp:document_location")
+  If oNode.childnodes.Length > 0 Then
+    For i = 0 To oNode.childnodes.Length - 1
+      Select Case oNode.childnodes.item(i).nodeName
+        Case "mlp:repository"
+          docsArray(0, iCount) = oNode.childnodes.item(i).text
+        Case "mlp:document_pointer"
+          docsArray(1, iCount) = oNode.childnodes.item(i).text
+          If docsArray(1, iCount) <> "" Then iDocCount = iDocCount + 1
+        Case "mlp:document_type"
+          docsArray(2, iCount) = oNode.childnodes.item(i).text
+      End Select
+    Next
+  End If
+  iCount = iCount + 1
+Next
+
+Set xmlDoc = Nothing
+Set SendDoc = Nothing
+Set NewDoc = Nothing
+
+Dim responseStr
+
+If iDocCount > 0 Then
+  'Response.write "there are " & iCount & " document for this vehicle"
+  
+  ' add session vars to make the page repeatable
+  Session("selection") = objNo & "|" & regNo
+  
+  responseStr = DRLeftNav
+  responseStr = responseStr & "<div style=""float: left;height:400px; width: 1px;""></div>" & VBCRLF _
+  & "<div id=""centrecol"">" & VBCRLF _
+  & "<div class=""col_2of4"" id=""tdiv"" name=""tdiv"">" & VBCRLF _
+  & "<h1>Thank you</h1>" & VBCRLF
+  If iDocCount > 1 Then
+    responseStr = responseStr & "<p><strong>Your search has returned " & iDocCount & " documents.  Links are shown below. Please click on each link to open the document.</strong></p>" & VBCRLF
+  Else
+    responseStr = responseStr & "<p><strong>Your search has returned " & iDocCount & " document.  The Link is shown below. Please click on this link to open the document.</strong></p>" & VBCRLF
+  End If
+  
+  For i = 0 To UBound(docsArray, 2)
+    If docsArray(1, i) <> "" Then
+      responseStr = responseStr & "<table border=""0"" cellpadding=""0"" cellspacing=""0"" class=""infobox"">" & VBCRLF _
+      & "<tbody>" & VBCRLF _
+      & "<tr>" & VBCRLF _
+      & "<td class=""texttd"">" & VBCRLF
+      
+      If docsArray(0, i) = "GDMS" Then
+        responseStr = responseStr & "<p style=""float: left; width: 300px;""><a href=""/soap/get-sxml_doc-dispatch.asp?document_id=" & Server.URLEncode(docsArray(1, i)) & """ onclick=""showloader('" & i & "');""><span style=""text-transform: capitalize;"">" & TranslateLabel(docsArray(2, i)) & "</span></a></p>" & VBCRLF
+      ElseIf docsArray(0, i) = "SGS" Then
+        sSGSURL = docsArray(1, i)
+        Dim FileExtArray, FileExt
+        FileExtArray = Split(sSGSURL, ".")
+        FileExt = FileExtArray(UBound(FileExtArray))
+        
+        If InStr(sSGSURL, "ecr.manheim.co.uk") > 0 Then
+          If FileExt = "pdf" Then
+            'responseStr = responseStr & "<p style=""float: left; width: 300px;""><a href=""" & sSGSURL & """ target=""_blank""><span style=""text-transform: capitalize;"">" & TranslateLabel(docsArray(2, i)) & "</span></a></p>" & VBCRLF
+            responseStr = responseStr & "<p style=""float: left; width: 300px;""><a href=""/pdf-retrieve/?pdfurl=" & Server.URLEncode(sSGSURL) & """ onclick=""showloader('" & i & "');""><span style=""text-transform: capitalize;"">" & TranslateLabel(docsArray(2, i)) & "</span></a></p>" & VBCRLF
+          End If
+          
+        ElseIf InStr(sSGSURL, "itfleetplus.co.uk") > 0 Then
+        
+          responseStr = responseStr & "<p style=""float: left; width: 300px;""><a href=""/pdf-retrieve/?pdfurl=" & Server.URLEncode(sSGSURL) & """ onclick=""showloader('" & i & "');""><span style=""text-transform: capitalize;"">" & TranslateLabel(docsArray(2, i)) & "</span></a></p>" & VBCRLF
+          
+        ElseIf InStr(sSGSURL, "ci.vimsweb.com") > 0 Then
+          sSGSURL = Replace(sSGSURL, "ConditionReport", "ConditionReportPrint")
+          sSGSURL = Replace(sSGSURL, "AppraisalReport", "AppraisalReportPrint")
+          sSGSURL = Replace(sSGSURL, "aspx?inspection_id", "aspx?culture=en-GB&inspection_id")
+          
+          responseStr = responseStr & "<p style=""float: left; width: 300px;""><a href=""/pdf-grabber/?pdfurl=" & Server.URLEncode(sSGSURL) & """ onclick=""showloader('" & i & "');""><span style=""text-transform: capitalize;"">" & TranslateLabel(docsArray(2, i)) & "</span></a></p>" & VBCRLF
+          
+        ElseIf InStr(sSGSURL, "www.bcaimage.com") > 0 OR InStr(sSGSURL, "myinspections.bca.com") > 0 Then
+          responseStr = responseStr & "<p style=""float: left; width: 300px;""><a href=" & sSGSURL & " target=""_blank""><span style=""text-transform: capitalize;"">View The Detailed Vehicle Inspection Document</span></a></p>" & VBCRLF
+          
+        End If
+      End If
+      
+      responseStr = responseStr & "<div style=""width: 35px; height: 35px; float: right; margin-bottom: -20px; margin-top: -2px;""><img name=""loading_" & i & """ id=""loading_" & i & """ src=""/images/dot.png"" width=""35"" height=""35"" /></div>" & VBCRLF _
+      & "</td>" & VBCRLF _
+      & "<td><img height=""50"" src=""/images/blank.gif"" width=""1"" /></td>" & VBCRLF _
+      & "</tr>" & VBCRLF _
+      & "<tr>" & VBCRLF _
+      & "<td class=""foottd"" colspan=""2"">&nbsp;</td>" & VBCRLF _
+      & "</tr>" & VBCRLF _
+      & "</tbody>" & VBCRLF _
+      & "</table>" & VBCRLF
+    End If
+  Next
+  
+  responseStr = responseStr & "</div>"
+  
+  Response.write responseStr
+Else
+  responseStr = DRLeftNav
+  responseStr = responseStr & "<div style=""float: left;height:400px; width: 1px;""></div>" & VBCRLF _
+  & "<div id=""centrecol"">" & VBCRLF _
+  & "<div class=""col_2of4"" id=""tdiv"" name=""tdiv"">" & VBCRLF _
+  & "<h1>Sorry, No Documents Relating to this Vehicle</h1>" & VBCRLF _
+  & "<p><strong>Regretably there are no documents relating to this vehicle on the system at the moment.</strong>" & VBCRLF _
+  & "</div>"
+  
+  Response.write responseStr
+End If
+
+%>
+</HTML>
