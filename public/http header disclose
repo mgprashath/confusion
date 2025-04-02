@@ -1,0 +1,14 @@
+Here’s a clear recommendation section you can add to your slide on Information Disclosure Through HTTP Headers:
+
+⸻
+
+Recommendation:
+	•	Disable or remove sensitive headers such as X-Powered-By, Server, X-AspNet-Version, and X-AspNetMvc-Version from the HTTP response.
+	•	Use a reverse proxy (e.g., NGINX or IIS) to intercept and modify headers before they reach the client.
+	•	In IIS, configure the web.config to suppress headers, or use URL Rewrite/Outbound Rules to strip them.
+	•	In NGINX, use server_tokens off; and set a custom header (e.g., Server: SecureProxy) to avoid revealing server technologies.
+	•	Regularly review and audit headers for unintentional disclosures as part of your secure deployment process.
+
+⸻
+
+Let me know if you’d like this in bullet-only format or shorter for slide use.
