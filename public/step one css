@@ -1,28 +1,17 @@
-/* Style for "Step 1 - Validate Vehicle" menu highlight */
-.sub_nav li:first-child a {
-  background-color: #005dab; /* example blue */
+.sub_nav li a {
+  background-color: #002f5f;
   color: #fff;
+  display: block;
+  padding: 10px;
+  text-decoration: none;
 }
 
-/* Spacer */
-.spacer-div {
-  float: left;
-  height: 400px;
-  width: 1px;
-}
-
-/* Spinner visibility helper */
-.hidden {
-  visibility: hidden;
-}
-
-/* Validate button */
-.button.button_large {
-  background-color: #f9c300; /* bright yellow */
-  color: #000;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
+.sub_nav li a.highlight-step1 {
+  background-color: #002f5f;
   font-weight: bold;
+}
+.sub_nav li a.inactive {
+  background-color: #aaa;
+  color: #fff;
+  cursor: default;
 }
