@@ -1,0 +1,51 @@
+Here’s a point-form description of the existing system technology (Classic ASP), its limitations as a legacy system, and a comparison table showing the evolution of Microsoft’s web technology stack (Classic ASP to ASP.NET Core), including support status:
+
+⸻
+
+Existing System Overview (Classic ASP)
+	•	Built on Classic ASP (Active Server Pages).
+	•	Scripting language: VBScript or JScript.
+	•	Server-side rendering through .asp files.
+	•	Relies on COM components and ADO for database interaction.
+	•	Limited separation of concerns (HTML and logic are tightly coupled).
+	•	Runs on IIS (Internet Information Services).
+	•	No built-in support for modern practices like:
+	•	MVC (Model-View-Controller)
+	•	Dependency Injection
+	•	Strong security headers
+	•	Scripts are interpreted, not compiled — lower performance.
+	•	Difficult to maintain and extend for modern web needs.
+
+⸻
+
+Why Classic ASP is a Legacy/Deprecated System
+	•	Outdated technology: Released in 1996, replaced by ASP.NET in 2002.
+	•	No longer actively developed by Microsoft.
+	•	Security limitations: No modern defenses like anti-XSS or CSRF protections.
+	•	Poor scalability for modern, component-based architecture.
+	•	Minimal IDE support (e.g., no IntelliSense, debugging tools).
+	•	Lack of community support and packages.
+	•	No official cross-platform support (Windows/IIS only).
+	•	Security risks increase over time without updates.
+
+⸻
+
+Microsoft Web Technology Evolution and Support Table
+
+Technology	Released	Current Status	End of Support	Modern Replacement
+Classic ASP	1996	Legacy/Deprecated	No support roadmap; only maintained for backwards compatibility in IIS	ASP.NET / ASP.NET Core
+ASP.NET WebForms	2002	Legacy	Part of .NET Framework; no active innovation	ASP.NET MVC / Razor Pages
+ASP.NET MVC	2009	Maintenance only	.NET Framework 4.8 support ends in 2029	ASP.NET Core MVC
+ASP.NET Core	2016	Fully supported	Active development with .NET 8 LTS	Current best practice
+
+
+
+⸻
+
+Key Takeaway Slide Message
+
+The existing platform is built using Classic ASP, a 1990s-era scripting framework that lacks support for modern development, security, and performance needs. It is officially legacy and poses maintainability and risk concerns. Migration to ASP.NET Core is highly recommended.
+
+⸻
+
+Let me know if you’d like this turned into PowerPoint slide content or need a modern stack comparison (e.g., Classic ASP vs ASP.NET Core in features).
