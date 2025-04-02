@@ -1,0 +1,12 @@
+Here’s a short and clear “Requirement” section you can use in your presentation:
+
+⸻
+
+Requirement
+	•	A recent penetration test revealed multiple security vulnerabilities in the legacy Classic ASP system (e.g., missing HTTP security headers, inline script violations, sensitive data in GET requests).
+	•	Although the best long-term solution is to migrate to modern, supported technology, this is not immediately feasible due to business dependencies and resource constraints.
+	•	Therefore, the immediate requirement is to remediate the identified vulnerabilities in the existing system to reduce security risks and maintain compliance while planning for a future system upgrade.
+
+⸻
+
+Let me know if you want a one-liner version too.
