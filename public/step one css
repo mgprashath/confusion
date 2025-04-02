@@ -1,0 +1,28 @@
+/* Style for "Step 1 - Validate Vehicle" menu highlight */
+.sub_nav li:first-child a {
+  background-color: #005dab; /* example blue */
+  color: #fff;
+}
+
+/* Spacer */
+.spacer-div {
+  float: left;
+  height: 400px;
+  width: 1px;
+}
+
+/* Spinner visibility helper */
+.hidden {
+  visibility: hidden;
+}
+
+/* Validate button */
+.button.button_large {
+  background-color: #f9c300; /* bright yellow */
+  color: #000;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
