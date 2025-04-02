@@ -1,0 +1,43 @@
+Here’s a clear and concise requirement definition you can include in your presentation — addressing the need to resolve vulnerabilities immediately while planning a future migration to modern technologies. This aligns with your pen test report findings and current situation.
+
+⸻
+
+Requirement Definition & Remediation Strategy
+
+Background
+	•	The current application is built using Classic ASP, a legacy Microsoft technology.
+	•	A recent penetration test has identified multiple critical and medium vulnerabilities including:
+	•	Sensitive data exposure via GET requests
+	•	Missing HttpOnly cookie flags
+	•	Outdated security headers
+	•	Inline scripts and styles violating CSP (Content Security Policy)
+	•	Vulnerable server enumeration (IIS short name)
+	•	Deprecated platform dependencies
+
+Immediate Objectives (Short-Term)
+	•	Mitigate high-risk vulnerabilities within the existing Classic ASP system:
+	•	Refactor inline JavaScript and CSS into external files
+	•	Implement secure HTTP headers via web server configuration (IIS)
+	•	Enforce secure cookie flags (HttpOnly, Secure)
+	•	Replace GET methods with POST for sensitive data
+	•	Disable IIS features vulnerable to enumeration
+	•	Ensure compliance with internal security policies and penetration testing requirements
+	•	Avoid service disruption during peak operational use
+
+Why Maintain the Existing System Temporarily
+	•	The current platform is business-critical and in active use.
+	•	A full rebuild or migration requires significant planning, resourcing, and testing.
+	•	Many dependencies are tightly coupled to Classic ASP (e.g., legacy COM, VBScript logic).
+	•	Minimizing risk while securing what’s already in production is cost-effective in the short term.
+
+Long-Term Objectives (Future Plan)
+	•	Plan phased migration to ASP.NET Core (or modern tech stack):
+	•	Modular rebuild based on user flows (Step 1–Step 3)
+	•	RESTful APIs to separate logic from presentation
+	•	Strong authentication, authorization, and secure session handling
+	•	Adopt CI/CD, automated testing, and DevSecOps practices
+	•	Deliver a scalable, secure, and maintainable solution with long-term support
+
+⸻
+
+Let me know if you want this turned into slide bullet points or need help converting it into a project roadmap.
