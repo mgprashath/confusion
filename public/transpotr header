@@ -1,0 +1,38 @@
+Here’s what you can put in your Vulnerability section for Missing Header - Content-Security-Policy:
+
+⸻
+
+Vulnerability:
+The application does not implement a Content-Security-Policy (CSP) header, which increases the risk of Cross-Site Scripting (XSS) and data injection attacks. Without a CSP, the browser cannot restrict the sources from which content like scripts, styles, or media can be loaded. This makes the application more vulnerable, especially if inline scripts or external resources are exploited.
+
+⸻
+
+Would you also like a matching Recommendation for the next slide?
+
+
+
+Here’s what you can put in your Vulnerability section for Missing Header - Content-Security-Policy:
+
+⸻
+
+Vulnerability:
+The application does not implement a Content-Security-Policy (CSP) header, which increases the risk of Cross-Site Scripting (XSS) and data injection attacks. Without a CSP, the browser cannot restrict the sources from which content like scripts, styles, or media can be loaded. This makes the application more vulnerable, especially if inline scripts or external resources are exploited.
+
+⸻
+
+Would you also like a matching Recommendation for the next slide?
+
+Here’s the Recommendation you can include on the next slide:
+
+⸻
+
+Recommendation:
+	•	Implement a Content-Security-Policy (CSP) header to control which resources the browser is allowed to load.
+	•	Set the policy to allow only trusted sources, e.g.:
+Content-Security-Policy: default-src 'self'; script-src 'self'
+	•	Remove or refactor inline scripts and styles into separate .js and .css files to comply with CSP restrictions.
+	•	Test the CSP in Report-Only mode first to monitor potential breakages before enforcing.
+
+⸻
+
+Let me know if you want a matching Resolution block too.
