@@ -1,0 +1,63 @@
+Here’s a summary of the 7 vulnerabilities shown in your image, which you can include as slide content for your presentation. Each entry includes a title, explanation, risk, and suggested remediation:
+
+⸻
+
+1. Sensitive Information Sent via GET Request
+	•	Description: Sensitive data like usernames, passwords, or tokens are sent through URLs using the HTTP GET method.
+	•	Risk: URLs are often logged in browser history, server logs, and third-party tools—leading to potential data leaks.
+	•	Remediation: Use the POST method for transmitting sensitive information, and encrypt the data using HTTPS.
+
+⸻
+
+2. Cookie Without HttpOnly Flag Set
+	•	Description: Cookies lack the HttpOnly attribute, making them accessible via JavaScript.
+	•	Risk: Increases the risk of cross-site scripting (XSS) attacks, as malicious scripts can steal session cookies.
+	•	Remediation: Set the HttpOnly flag for cookies that do not require access from JavaScript to protect against theft.
+
+⸻
+
+3. Information Disclosure Through HTTP Headers
+	•	Description: Web servers or applications expose sensitive details like software version, server type, or framework in headers.
+	•	Risk: Helps attackers fingerprint systems and exploit known vulnerabilities.
+	•	Remediation: Configure the web server to suppress or sanitize HTTP headers, such as X-Powered-By, Server, and X-AspNet-Version.
+
+⸻
+
+4. Missing Application Security Headers
+	•	Description: Headers like Content-Security-Policy, X-Frame-Options, or X-XSS-Protection are not set.
+	•	Risk: Leaves applications open to XSS, clickjacking, and other browser-based attacks.
+	•	Remediation: Add appropriate security headers to all responses. Examples include:
+	•	Strict-Transport-Security
+	•	Content-Security-Policy
+	•	X-Content-Type-Options
+
+⸻
+
+5. IIS Short Name Enumeration
+	•	Description: IIS servers respond differently when a request uses 8.3 short file names (e.g., test~1.aspx).
+	•	Risk: Attackers can enumerate files or folders and use this info for further exploitation.
+	•	Remediation: Disable short file name generation on NTFS:
+
+fsutil behavior set disable8dot3 1
+
+And block suspicious requests via web.config or firewall rules.
+
+⸻
+
+6. Outdated and Deprecated Software Detected
+	•	Description: The server is running software that is no longer supported or hasn’t been updated.
+	•	Risk: Known vulnerabilities can be exploited by attackers.
+	•	Remediation: Regularly patch and update server software, frameworks, libraries, and components.
+
+⸻
+
+7. Missing DNS Security Records
+	•	Description: DNS lacks records like DNSSEC, SPF, DKIM, or DMARC.
+	•	Risk: Vulnerable to DNS spoofing, email spoofing, and man-in-the-middle attacks.
+	•	Remediation:
+	•	Enable DNSSEC to protect integrity.
+	•	Add SPF, DKIM, and DMARC records to secure email communication.
+
+⸻
+
+Let me know if you’d like this formatted for PowerPoint slides or need sample slides for each item.
