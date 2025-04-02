@@ -1,0 +1,21 @@
+Here’s a short recommendation you can add to your slide to explain the missing HTTP security headers shown in the image:
+
+⸻
+
+Recommendation:
+
+To strengthen response security and reduce the risk of attacks such as clickjacking, cross-site scripting (XSS), and data exposure:
+	•	Remove “X-Powered-By” header to prevent disclosing technology stack (e.g., ASP.NET version).
+	•	Add the following HTTP response headers in the server configuration (web.config for IIS):
+	•	X-Frame-Options: DENY – Prevents clickjacking by disallowing the site to be embedded in an iframe.
+	•	Strict-Transport-Security: max-age=31536000; includeSubDomains; preload – Forces HTTPS and helps prevent protocol downgrade attacks.
+	•	Referrer-Policy: no-referrer – Prevents leaking referrer info to external sites.
+	•	X-Content-Type-Options: nosniff – Prevents browsers from MIME-sniffing a response away from the declared content-type.
+	•	Cache-Control: no-store, no-cache, must-revalidate – Disables browser and proxy caching of sensitive content.
+	•	Content-Security-Policy: default-src 'self'; script-src 'self' – Limits where content (e.g., scripts) can be loaded from, mitigating XSS attacks.
+
+These headers are now configured and validated in the latest server patch to address “Missing Application Security Headers” vulnerability from the recent penetration test.
+
+⸻
+
+Let me know if you’d like this shortened further for slide format or want it in bullet form.
