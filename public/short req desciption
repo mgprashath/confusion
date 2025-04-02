@@ -1,0 +1,29 @@
+You’re absolutely right — that’s more suited for notes or a document. Here’s a condensed version perfect for a presentation slide:
+
+⸻
+
+Requirement Definition & Remediation Strategy
+
+Current System:
+	•	Built on legacy Classic ASP
+	•	Technology is deprecated, limited Microsoft support
+	•	Penetration testing found critical security issues
+
+Immediate Needs:
+	•	Fix vulnerabilities in the current system (e.g., CSP violations, insecure cookies, sensitive GET requests)
+	•	Apply secure headers and server hardening
+	•	Maintain service continuity
+
+Why Stay on Classic ASP (for now):
+	•	Business-critical system in active use
+	•	Migration requires time, budget, and coordination
+	•	Short-term fixes reduce risk without disruption
+
+Future Plan:
+	•	Gradual migration to modern ASP.NET Core or equivalent
+	•	Adopt secure coding practices and modern architecture
+	•	Improve long-term maintainability and security
+
+⸻
+
+This version is presentation-ready. Let me know if you’d like it turned into a slide layout or if you’d prefer a visual (like a timeline or table).
