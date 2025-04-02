@@ -1,0 +1,14 @@
+Here’s a clear and concise recommendation you can add to your slide for “Cookie Without HttpOnly Flag Set”:
+
+⸻
+
+Recommendation:
+	•	Configure cookies with the HttpOnly attribute to prevent client-side access via JavaScript.
+	•	Set the Secure flag to ensure cookies are transmitted only over HTTPS.
+	•	Use a reverse proxy (e.g., IIS, NGINX) to enforce security headers at the server level.
+	•	Review application code and third-party libraries to ensure cookies are not set without flags.
+	•	Regularly test cookie configurations as part of your security testing lifecycle.
+
+⸻
+
+Let me know if you want a shorter or bullet-style version too.
