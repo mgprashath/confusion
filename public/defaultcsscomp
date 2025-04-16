@@ -1,0 +1,14 @@
+.spacer-column {
+  float: left;
+  height: 400px;
+  width: 1px;
+}
+.active-step {
+  background-color: #f90;
+  color: #fff;
+}
+.disabled-link {
+  color: #fff;
+  cursor: default;
+  pointer-events: none;
+}
