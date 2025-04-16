@@ -1,0 +1,42 @@
+<%
+Dim sesObjNo, sesRegNo
+If Session("selection") <> "" Then
+  sesObjNo = Server.HTMLEncode(Split(Session("selection"), "|")(0))
+  sesRegNo = Server.HTMLEncode(Split(Session("selection"), "|")(1))
+End If
+
+Dim DRLeftNav
+
+Select Case iMenuLevel
+  Case 1
+    DRLeftNav = "<div class=""col_1of4 col_left"">" & VBCRLF _
+    & "<div class=""clientlogo""><img src=""/images/screen-clean.jpg"" width=""192"" height=""128"" alt=""screen clean""></div>" & VBCRLF _
+    & "<h2>Progress<span class="""">&#160;</span></h2>" & VBCRLF _
+    & "<ul class=""sub_nav"">" & VBCRLF _
+    & "<li><a href=""/"" title=""step 1 - validate vehicle"" class=""active-step"">Step 1 - Validate Vehicle</a></li>" & VBCRLF _
+    & "<li class=""inactive""><a href=""#"" title=""step 2 - select document"" class=""disabled-link"">Step 2 - Select Document</a></li>" & VBCRLF _
+    & "</ul>" & VBCRLF _
+    & "</div>"
+
+  Case 2
+    DRLeftNav = "<div class=""col_1of4 col_left"">" & VBCRLF _
+    & "<div class=""clientlogo""><img src=""/images/screen-clean.jpg"" width=""192"" height=""128"" alt=""screen clean""></div>" & VBCRLF _
+    & "<h2>Progress<span class="""">&#160;</span></h2>" & VBCRLF _
+    & "<ul class=""sub_nav"">" & VBCRLF _
+    & "<li><a href=""/"" title=""step 1 - validate vehicle"">Step 1 - Validate Vehicle</a></li>" & VBCRLF _
+    & "<li><a href=""#"" title=""step 2 - select document"" class=""active-step disabled-link"">Step 2 - Select Document</a></li>" & VBCRLF _
+    & "</ul>" & VBCRLF _
+    & "</div>"
+
+  Case 3
+    DRLeftNav = "<div class=""col_1of4 col_left"">" & VBCRLF _
+    & "<div class=""clientlogo""><img src=""/images/screen-clean.jpg"" width=""192"" height=""128"" alt=""screen clean""></div>" & VBCRLF _
+    & "<h2>Progress<span class="""">&#160;</span></h2>" & VBCRLF _
+    & "<ul class=""sub_nav"">" & VBCRLF _
+    & "<li><a href=""/"" title=""step 1 - validate vehicle"">Step 1 - Validate Vehicle</a></li>" & VBCRLF _
+    & "<li><a href=""/soap/get-sxml_doc-req_fullw.asp?object_number=" & sesObjNo & "&registration_number=" & sesRegNo & """ title=""available documents"">Step 2 - Select Document</a></li>" & VBCRLF _
+    & "<li><a href=""#"" title=""step 3 - view document"" class=""active-step disabled-link"">Step 3 - View Document</a></li>" & VBCRLF _
+    & "</ul>" & VBCRLF _
+    & "</div>"
+End Select
+%>
