@@ -1,0 +1,84 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const validateBtn = document.getElementById("validateBtn");
+  if (validateBtn) {
+    validateBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      loadDoc(1);
+    });
+  }
+});
+
+function showSpinner() {
+  document.getElementById('spinWrap').style.visibility = 'visible';
+}
+
+function hideSpinner() {
+  document.getElementById('spinWrap').style.visibility = 'hidden';
+}
+
+function loadDoc(iStage) {
+  let xmlhttp;
+  if (window.XMLHttpRequest) {
+    xmlhttp = new XMLHttpRequest();
+  } else {
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+
+  switch (iStage) {
+    case 1:
+      showSpinner();
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          hideSpinner();
+          document.getElementById("left2cols").innerHTML = xmlhttp.responseText;
+        }
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 500) {
+          hideSpinner();
+          document.getElementById("left2cols").innerHTML = `
+            <div class="col_1of4 col_left">
+              <div class="clientlogo">
+                <img src="/images/screen-clean.jpg" width="192" height="128" alt="screen clean">
+              </div>
+              <h2>Progress<span class=""></span></h2>
+              <ul class="sub_nav">
+                <li><a href="/" title="step 1 - validate vehicle" class="active-step">Step 1 - Validate Vehicle</a></li>
+                <li><a href="#" title="step 2 - select document" class="disabled-link">Step 2 - Select Document</a></li>
+              </ul>
+            </div>
+            <div class="spacer-column"></div>
+            <div id="centrecol">
+              <div class="col_2of4" id="tdiv" name="tdiv">
+                <h1>Sorry there has been an Error</h1>
+                <p><strong>Please refer to the information on the right hand side for further assistance.</strong></p>
+              </div>
+            </div>`;
+        }
+      };
+
+      const objno = encodeURIComponent(document.getElementById("objno").value);
+      const regno = encodeURIComponent(document.getElementById("regno").value);
+      xmlhttp.open("POST", "/soap/get-sxml_car-val.asp", true);
+      xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xmlhttp.send("object_number=" + objno + "&registration_number=" + regno);
+      break;
+
+    case 2:
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          document.getElementById("fullwidth").innerHTML = xmlhttp.responseText;
+        }
+      };
+      const docid = encodeURIComponent(document.getElementById("docid").value);
+      xmlhttp.open("POST", "/soap/get-sxml_doc-dispatch.asp", true);
+      xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xmlhttp.send("document_id=" + docid);
+      break;
+
+    default:
+      break;
+  }
+}
+
+function showloader(imgid) {
+  document.getElementById("loading_" + imgid).src = "/images/ajax-loader.gif";
+}
