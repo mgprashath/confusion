@@ -1,0 +1,8 @@
+.active-step {
+  background-color: #0F3549;
+  color: #fff;
+}
+.disabled-link {
+  cursor: default;
+  pointer-events: none;
+}
